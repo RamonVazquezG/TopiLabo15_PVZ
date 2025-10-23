@@ -55,13 +55,11 @@ public class SpriteAnimator
     }
 
     // --- Equivalente a Sprite:update ---
-    public void Update(GameTime gameTime)
+    public void Update(float dt)
     {
         JustChangedFrame = false;
         JustFinishedAnimation = false;
 
-        // Obtener el delta time en segundos
-        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         frameTimer += dt * SpeedMultiplier;
 
         // Asegurarse de que el frame actual existe

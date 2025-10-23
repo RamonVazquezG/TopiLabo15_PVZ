@@ -12,7 +12,8 @@ public abstract class Entity
     public EntityManager Manager { get; private set; }
 
     // ID único (equivale a self:getUID())
-    public int UID { get; private set; }
+    private readonly int UID;
+    public int GetUID() => UID;
 
     // El que nos "disparó" o creó (ej. el jugador que dispara una bala)
     public Entity Spawner { get; private set; }
@@ -32,10 +33,9 @@ public abstract class Entity
     public bool IsRemoved { get; private set; } = false;
 
     // --- Listas de Componentes ---
-    // (Usamos el SpriteAnimator que creamos en el paso anterior)
-    public List<SpriteAnimator> Sprites { get; private set; }
-    public List<IState> States { get; private set; }
-    public List<Hitbox> Hitboxes { get; private set; }
+    public SpriteAnimator Sprite { get; private set; }
+    public int StateIndex { get; private set; }
+    public Hitbox Hitbox { get; private set; }
 
     // --- Constructor (Equivale a Entity:new) ---
     public Entity(EntityManager manager, int uid, Vector2 position, Vector2? velocity, Entity spawner)
@@ -46,27 +46,18 @@ public abstract class Entity
         this.Velocity = velocity ?? Vector2.Zero; // Si velocity es nulo, usa Vector2.Zero
         this.Spawner = spawner;
 
-        // Inicializar las listas de componentes
-        this.Sprites = new List<SpriteAnimator>();
-        this.States = new List<IState>();
-        this.Hitboxes = new List<Hitbox>();
-
         this.FrameCount = 0;
         this.TimeCount = 0.0;
     }
 
     // --- Lógica Principal de Actualización (de entity.lua) ---
 
-    // Equivalente a 'entity:statesUpdate(dt)'
-    public virtual void StatesUpdate(float dt)
+    public virtual void GenericUpdate(float dt)
     {
         this.FrameCount++;
         this.TimeCount += dt;
 
-        foreach (var state in States)
-        {
-            state.Update(dt);
-        }
+        this.Update(dt);
     }
 
     // Equivalente a 'entity:applyPhysics(dt)'
@@ -75,7 +66,6 @@ public abstract class Entity
         // Nota: En MonoGame, es común multiplicar por 'dt' en el 'Update' principal.
         // Pero seguimos tu lógica exacta:
         Position += Velocity * dt;
-        // Aquí iría la lógica de colisión con muros
     }
 
     // --- Lógica de Dibujo ---
@@ -86,18 +76,13 @@ public abstract class Entity
         // Llama al callback antes de dibujar sprites
         this.PreSpriteCallback();
 
-        foreach (var sprite in Sprites)
-        {
-            // Dibuja el sprite en la posición de esta entidad
-            sprite.Draw(spriteBatch, this.Position);
-        }
+        this.Sprite.Draw(spriteBatch, this.Position);
 
         // Llama al callback después de dibujar sprites
         this.PostSpriteCallback();
     }
 
     // --- Gestión de Eliminación ---
-
     // Equivalente a 'entity:remove()'
     public void Remove()
     {
@@ -108,36 +93,22 @@ public abstract class Entity
     }
 
     // --- Callbacks Virtuales (reemplazan 'Entity:setCallback') ---
-    // Las clases hijas (como 'Player') pueden hacer 'override' de estos
-    // métodos para añadir su propia lógica.
+    // Las clases hijas (como 'Player') pueden hacer 'override' de estos métodos para añadir su propia lógica.
+    public virtual void InitCallback() { } // Llamado una vez, en el primer frame de 'Update'
 
-    // Llamado una vez, en el primer frame de 'Update'
-    public virtual void InitCallback() { }
+    public virtual void SpawnedCallback(Entity spawner) { } // Llamado después de Init, si 'Spawner' no es nulo. Se utilizas cuando una entidad crea otra.
 
-    // Llamado después de Init, si 'Spawner' no es nulo
-    public virtual void SpawnedCallback(Entity spawner) { }
+    public virtual void PreUpdateCallback(float dt) { } // Llamado justo antes de 'GenericUpdate'
+    public virtual void Update(float dt) { } // Llamado cada frame en 'GenericUpdate'. Aquí puede ir la lógica principal de la entidad.
+    public virtual void PostUpdateCallback(float dt) { } // Llamado justo después de 'GenericUpdate'
 
-    // Llamado justo antes de 'StatesUpdate'
-    public virtual void PreStateCallback(float dt) { }
+    public virtual void PrePhysicsCallback(float dt) { } // Llamado justo antes de 'ApplyPhysics'
+    public virtual void PostPhysicsCallback(float dt) { } // Llamado justo después de 'ApplyPhysics'
 
-    // Llamado justo después de 'StatesUpdate'
-    public virtual void PostStateCallback(float dt) { }
+    public virtual void PreSpriteCallback() { } // Llamado antes de la lógica de dibujo de sprites
+    public virtual void PostSpriteCallback() { } // Llamado después de la lógica de dibujo de sprites
 
-    // Llamado justo antes de 'ApplyPhysics'
-    public virtual void PrePhysicsCallback(float dt) { }
+    public virtual void OnRemove() { } // Llamado cuando la entidad se marca para eliminar (IsRemoved = true)
 
-    // Llamado justo después de 'ApplyPhysics'
-    public virtual void PostPhysicsCallback(float dt) { }
-
-    // Llamado antes de la lógica de dibujo de sprites
-    public virtual void PreSpriteCallback() { }
-
-    // Llamado después de la lógica de dibujo de sprites
-    public virtual void PostSpriteCallback() { }
-
-    // Llamado cuando la entidad se marca para eliminar (IsRemoved = true)
-    public virtual void OnRemove() { }
-
-    // Llamado por el EntityManager justo antes de ser purgado de la lista
-    public virtual void RemovedCallback() { }
+    public virtual void RemovedCallback() { } // Llamado por el EntityManager justo antes de ser purgado de la lista
 }
