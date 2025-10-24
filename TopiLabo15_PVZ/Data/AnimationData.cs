@@ -30,29 +30,24 @@ public static class AnimationData
         // 1. Cargar la textura
         // NOTA: MonoGame elimina la extensión y la ruta 'Content/'.
         // 'assets/images/player/playerSkin_1.png' se vuelve 'assets/images/player/playerSkin_1'
-        Texture2D playerSkin1Tex = content.Load<Texture2D>("assets/images/player/playerSkin_1");
+        Texture2D peaShooterTex = content.Load<Texture2D>("assets/images/plants/peaShooterAnimTest");
 
         // 2. Crear el grupo (newGroup)
-        var playerSkin1 = new AnimationGroup(playerSkin1Tex, 8, 8);
+        var peaShooterGrup = new AnimationGroup(peaShooterTex, 48, 48);
 
-        // 3. Crear animación 'walk' (newAnimation)
-        var walkAnim = new Animation(0, 4, 4);
-        walkAnim.AddFrame(0, new Frame(FRAME));       // walk[0]
-        walkAnim.AddFrame(1, new Frame(FRAME * 3));   // walk[1]
-        walkAnim.AddFrame(2, new Frame(FRAME));       // walk[2]
-        walkAnim.AddFrame(3, new Frame(FRAME * 3));   // walk[3]
+        // 3. Crear animaciónes
+        var peaShootIdleAnim = new Animation(0, 23, 23);
+        peaShootIdleAnim.AddFrame(0, new Frame(0.1f));
+        peaShootIdleAnim.AddFrame(1, new Frame(0.2f));
+        peaShootIdleAnim.AddFrame(2, new Frame(0.3f));
+        peaShootIdleAnim.AddFrame(3, new Frame(0.1f));
+        peaShootIdleAnim.AddFrame(4, new Frame(0.2f));
+        peaShootIdleAnim.AddFrame(5, new Frame(0.3f));
 
-        // 4. Crear animación 'air' (newAnimation)
-        var airAnim = new Animation(1, 4, 4);
-        airAnim.AddFrame(0, new Frame(HUGE)); // air[0]
+        // 4. Añadir animaciones al grupo
+        peaShooterGrup.AddAnimation("idle", peaShootIdleAnim);
 
-        // 5. Añadir animaciones al grupo
-        playerSkin1.AddAnimation("walk", walkAnim);
-        playerSkin1.AddAnimation("air", airAnim);
-
-        // 6. Añadir el grupo al diccionario principal
-        Groups["playerSkin_1"] = playerSkin1;
-
-        // ... Repetirías esto para todos los grupos ...
+        // 5. Añadir el grupo al diccionario principal
+        Groups["peaShoter"] = peaShooterGrup;
     }
 }

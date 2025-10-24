@@ -33,11 +33,13 @@ public abstract class Entity
     public bool IsRemoved { get; private set; } = false;
 
     // --- Listas de Componentes ---
-    public SpriteAnimator Sprite { get; private set; }
+    public SpriteAnimator Sprite { get; set; }
     public int StateIndex { get; private set; }
     public Hitbox Hitbox { get; private set; }
 
     // --- Constructor (Equivale a Entity:new) ---
+    //Una entidad no puede crearse sin un EntityManager que la gestione.
+    //Por lo que solo se pueden instanciar entidades desde un EntityManager.
     public Entity(EntityManager manager, int uid, Vector2 position, Vector2? velocity, Entity spawner)
     {
         this.Manager = manager;
@@ -76,7 +78,7 @@ public abstract class Entity
         // Llama al callback antes de dibujar sprites
         this.PreSpriteCallback();
 
-        this.Sprite.Draw(spriteBatch, this.Position);
+        this.Sprite?.Draw(spriteBatch, this.Position);
 
         // Llama al callback después de dibujar sprites
         this.PostSpriteCallback();
