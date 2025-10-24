@@ -1,5 +1,3 @@
-using System;
-
 namespace TopiLabo15_PVZ
 {
     public static class Globals

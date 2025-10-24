@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using TopiLabo15_PVZ;
 
 public static class AnimationData
 {
@@ -23,8 +24,8 @@ public static class AnimationData
         // para demostrar cómo funciona.
 
         // Suponiendo que tienes valores para FRAME y HUGE
-        const float FRAME = 1 / 60f; // Ejemplo: 60 FPS
-        const float HUGE = 9999f;
+        const float FRAME = Globals.FRAME;
+        const float HUGE = Globals.HUGE;
 
         // 1. Cargar la textura
         // NOTA: MonoGame elimina la extensión y la ruta 'Content/'.

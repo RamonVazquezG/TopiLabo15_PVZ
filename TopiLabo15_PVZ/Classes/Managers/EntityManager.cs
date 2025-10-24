@@ -71,10 +71,8 @@ public class EntityManager
 
     // --- Equivalente a 'updateEntityLogic' ---
     // Se llama una vez por frame desde tu clase principal del juego.
-    public void Update(GameTime gameTime)
+    public void Update(float dt)
     {
-        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
         // NOTA: Usamos .ToList() para crear una copia temporal de la lista
         // de entidades. Esto nos permite añadir/quitar entidades de la
         // lista 'entities' de forma segura *durante* el bucle (ej. una

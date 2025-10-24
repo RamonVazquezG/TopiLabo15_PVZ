@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
@@ -25,5 +25,14 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.*" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\Heredates\" />
+    <Folder Include="Data\GameStates\" />
+    <Folder Include="Data\Others\" />
+    <Folder Include="Data\PickUps\" />
+    <Folder Include="Data\UI\" />
+    <Folder Include="Data\Zombies\" />
+    <Folder Include="Data\Plants\" />
   </ItemGroup>
 </Project>
