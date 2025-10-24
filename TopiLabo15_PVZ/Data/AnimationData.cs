@@ -1,6 +1,7 @@
 ﻿// Esta clase estática contendrá todas las definiciones de animación cargadas.
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using TopiLabo15_PVZ;
 
@@ -30,7 +31,7 @@ public static class AnimationData
         // 1. Cargar la textura
         // NOTA: MonoGame elimina la extensión y la ruta 'Content/'.
         // 'assets/images/player/playerSkin_1.png' se vuelve 'assets/images/player/playerSkin_1'
-        Texture2D peaShooterTex = content.Load<Texture2D>("assets/images/plants/peaShooterAnimTest");
+        Texture2D peaShooterTex = content.Load<Texture2D>("peaShooterAnimTest");
 
         // 2. Crear el grupo (newGroup)
         var peaShooterGrup = new AnimationGroup(peaShooterTex, 48, 48);
@@ -49,5 +50,6 @@ public static class AnimationData
 
         // 5. Añadir el grupo al diccionario principal
         Groups["peaShoter"] = peaShooterGrup;
+        Console.WriteLine("AnimationData loaded: peaShoter group with idle animation.");
     }
 }
