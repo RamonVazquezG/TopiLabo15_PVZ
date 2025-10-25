@@ -7,7 +7,6 @@ using TopiLabo15_PVZ;
 
 namespace TopiLabo15_PVZ.Data.Animations
 {
-    // Elimina 'static' para permitir la herencia de AnimationGroup
     public class PeaShooterAnims
     {
         public PeaShooterAnims(ContentManager content)
