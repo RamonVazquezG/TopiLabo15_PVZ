@@ -48,23 +48,27 @@ public static class MouseInput
         // 2. Obtener el nuevo estado "actual"
         currentState = Mouse.GetState();
 
-        // 3. Actualizar propiedades de posición
-        Position = currentState.Position.ToVector2();
-        Delta = (currentState.Position - previousState.Position).ToVector2();
+        // 3. ¡¡CONVERTIR COORDENADAS!!
+        // Obtiene la posición de la ventana...
+        Vector2 windowPosition = currentState.Position.ToVector2();
+        // ...y la convierte a la posición del "mundo" del juego
+        Position = ScreenManager.ScreenToWorld(windowPosition);
+
+        // El resto de la lógica no cambia...
+
+        // Calcular el Delta (cambio) en coordenadas del mundo
+        Vector2 previousWorldPosition = ScreenManager.ScreenToWorld(previousState.Position.ToVector2());
+        Delta = Position - previousWorldPosition;
 
         // 4. Calcular los estados del botón izquierdo
-
-        // ¿Estaba suelto el frame pasado Y presionado este frame?
         LeftButtonPressed =
             (previousState.LeftButton == ButtonState.Released) &&
             (currentState.LeftButton == ButtonState.Pressed);
 
-        // ¿Estaba presionado el frame pasado Y sigue presionado este frame?
         LeftButtonHeld =
             (previousState.LeftButton == ButtonState.Pressed) &&
             (currentState.LeftButton == ButtonState.Pressed);
 
-        // ¿Estaba presionado el frame pasado Y suelto este frame?
         LeftButtonReleased =
             (previousState.LeftButton == ButtonState.Pressed) &&
             (currentState.LeftButton == ButtonState.Released);

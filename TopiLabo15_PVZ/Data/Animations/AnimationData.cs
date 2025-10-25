@@ -14,6 +14,7 @@ public static class AnimationData
 
     static AnimationData()
     {
+
         Groups = new Dictionary<string, AnimationGroup>();
     }
 
@@ -28,5 +29,6 @@ public static class AnimationData
     public static void LoadContent(ContentManager content)
     {
         new PeaShooterAnims(content); //Con solo hacer una instancia, se registran las animaciones.
+        new PatioAnims(content);
     }
 }

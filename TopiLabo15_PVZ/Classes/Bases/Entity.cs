@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 // Equivalente a 'Entity: Object'
 public abstract class Entity
@@ -40,36 +41,34 @@ public abstract class Entity
     // --- Constructor (Equivale a Entity:new) ---
     //Una entidad no puede crearse sin un EntityManager que la gestione.
     //Por lo que solo se pueden instanciar entidades desde un EntityManager.
-    public Entity(EntityManager manager, int uid, Vector2 position, Vector2? velocity, Entity spawner)
+    public Entity(EntityManager manager, int uid, Vector2? position, Vector2? velocity, Entity spawner)
     {
         this.Manager = manager;
         this.UID = uid;
-        this.Position = position;
-        this.Velocity = velocity ?? Vector2.Zero; // Si velocity es nulo, usa Vector2.Zero
+        this.Position = position ?? Vector2.Zero; // Si position es nulo, usa Vector2.Zero
+        this.Velocity = velocity ?? Vector2.Zero; // x2
         this.Spawner = spawner;
 
         this.FrameCount = 0;
         this.TimeCount = 0.0;
     }
 
-    // --- Lógica Principal de Actualización (de entity.lua) ---
+    // --- Lógica Principal de Actualización ---
 
     public virtual void GenericUpdate(float dt)
     {
         this.FrameCount++;
         this.TimeCount += dt;
 
-        this.Update(dt);
+        this.UpdateCallback(dt);
 
         this.Sprite?.Update(dt);
     }
 
-    // Equivalente a 'entity:applyPhysics(dt)'
     public virtual void ApplyPhysics(float dt)
     {
-        // Nota: En MonoGame, es común multiplicar por 'dt' en el 'Update' principal.
-        // Pero seguimos tu lógica exacta:
         Position += Velocity * dt;
+        //Debug.WriteLine(this.FrameCount); // Para probar que se está llamando solo una vez por frame.
     }
 
     // --- Lógica de Dibujo ---
@@ -80,7 +79,7 @@ public abstract class Entity
         // Llama al callback antes de dibujar sprites
         this.PreSpriteCallback();
 
-        this.Sprite?.Draw(spriteBatch, this.Position);
+        if (this.Sprite != null) { this.DrawSpriteCallback(spriteBatch); }
 
         // Llama al callback después de dibujar sprites
         this.PostSpriteCallback();
@@ -103,13 +102,14 @@ public abstract class Entity
     public virtual void SpawnedCallback(Entity spawner) { } // Llamado después de Init, si 'Spawner' no es nulo. Se utilizas cuando una entidad crea otra.
 
     public virtual void PreUpdateCallback(float dt) { } // Llamado justo antes de 'GenericUpdate'
-    public virtual void Update(float dt) { } // Llamado cada frame en 'GenericUpdate'. Aquí puede ir la lógica principal de la entidad.
+    public virtual void UpdateCallback(float dt) { } // Llamado cada frame en 'GenericUpdate'. Aquí puede ir la lógica principal de la entidad.
     public virtual void PostUpdateCallback(float dt) { } // Llamado justo después de 'GenericUpdate'
 
     public virtual void PrePhysicsCallback(float dt) { } // Llamado justo antes de 'ApplyPhysics'
     public virtual void PostPhysicsCallback(float dt) { } // Llamado justo después de 'ApplyPhysics'
 
     public virtual void PreSpriteCallback() { } // Llamado antes de la lógica de dibujo de sprites
+    public virtual void DrawSpriteCallback(SpriteBatch spriteBatch) { this.Sprite.Draw(spriteBatch, this.Position); }
     public virtual void PostSpriteCallback() { } // Llamado después de la lógica de dibujo de sprites
 
     public virtual void OnRemove() { } // Llamado cuando la entidad se marca para eliminar (IsRemoved = true)

@@ -57,25 +57,22 @@ public abstract class GameState
     // Equivale a update(dt)
     public void GenericUpdate(float dt)
     {
-        // Actualiza todas las entidades de este estado
+        this.PreUpdateCallback(dt);
+
         EntityManager.Update(dt);
 
-        // Llama al 'OnUpdate' de la clase hija (ej. MainMenuState)
-        this.OnUpdate(dt);
+        this.PostUpdateCallback(dt);
     }
 
     // Equivale a draw()
     public void Draw(SpriteBatch spriteBatch)
     {
-        // Dibuja todas las entidades (¡esto faltaba en tu GameState de Lua!)
-        // Asumimos que quieres dibujar las entidades.
-        foreach (var entity in EntityManager.GetEntities())
-        {
-            entity.Draw(spriteBatch);
-        }
+        this.PreDrawCallback(spriteBatch);
+
+        this.OnDraw(spriteBatch);
 
         // Llama al 'OnDraw' de la clase hija
-        this.OnDraw(spriteBatch);
+        this.PostDrawCallback(spriteBatch);
     }
 
     // --- Callbacks Virtuales (para que las clases hijas las implementen) ---
@@ -87,11 +84,19 @@ public abstract class GameState
     public virtual void OnEnter() { }
 
     // Equivale a onUpdate(dt)
-    public virtual void OnUpdate(float dt) { }
+    public virtual void PreUpdateCallback(float dt) { }
+    public virtual void PostUpdateCallback(float dt) { }
 
     // Equivale a onDraw()
     // Nota: Pasamos SpriteBatch para que sea útil
-    public virtual void OnDraw(SpriteBatch spriteBatch) { }
+    public virtual void PreDrawCallback(SpriteBatch spriteBatch) { }
+    public virtual void OnDraw(SpriteBatch spriteBatch) { // Simplemente dibuja a todas las entidades.
+        foreach (var entity in EntityManager.GetEntities())
+        {
+            entity.Draw(spriteBatch);
+        }
+    }
+    public virtual void PostDrawCallback(SpriteBatch spriteBatch) { }
 
     // Equivale a onExit()
     public virtual void OnExit() { }

@@ -18,6 +18,7 @@ public class Game1 : Game
     private GameState _mainMenuState;
     private GameState _playingState;
 
+    public float GameTime = 0f;
     public Game1()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -38,6 +39,8 @@ public class Game1 : Game
         GameManager.RegisterNewGameState(_playingState);
 
         base.Initialize();
+
+        ScreenManager.Initialize(_graphics, GraphicsDevice);
     }
 
     protected override void LoadContent()
@@ -58,6 +61,10 @@ public class Game1 : Game
         // 1. Calcular dt.
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds; //dt es cuanto tiempo ha pasado desde el último frame. Es importante para que el juego corra igual de rápido en computadoras rápidas y lentas.
         
+        dt = MathF.Min(dt, 1f/30f); // Limita dt a un máximo de 30 FPS para evitar problemas en caso de lag severo (Se puede conseguir facilmente agarrando la ventana por mucho tiempo).
+
+        GameTime += dt;
+
         // 2. Actualiza el input antes que el juego en si.
         // Esto "prepara" todas las propiedades (IsPressed, IsHeld) para este frame.
         MouseInput.Update();
@@ -74,13 +81,22 @@ public class Game1 : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
-        // Configura el SpriteBatch (ej. PointClamp para pixel art)
+        // 1. "Empezar" el renderizado a la pantalla virtual
+        ScreenManager.BeginRender();
+
+        // 2. Dibujar TODO tu juego (con SpriteBatch)
+        // Usa PointClamp aquí también para sprites individuales si quieres
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
-        // El GameManager se encarga de dibujar el estado correcto
-        GameManager.Draw(_spriteBatch);
+        GameManager.Draw(_spriteBatch); // Dibuja entidades
+
+        // Ejemplo de texto (se dibujará en la resolución virtual)
+        // _spriteBatch.DrawString(miFuente, "Hola", new Vector2(10, 10), Color.White);
 
         _spriteBatch.End();
+
+        // 3. "Terminar" el renderizado y estirar a la ventana
+        ScreenManager.EndRender(_spriteBatch);
 
         base.Draw(gameTime);
     }

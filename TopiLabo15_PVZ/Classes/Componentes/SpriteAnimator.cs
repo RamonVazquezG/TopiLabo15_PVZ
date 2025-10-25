@@ -24,6 +24,8 @@ public class SpriteAnimator
     // Multiplicador de tiempo (equivale a dtMulti)
     public float SpeedMultiplier { get; set; }
 
+    public float LayerDepth { get; set; }
+
     // Escala (equivale a sx, sy)
     public Vector2 Scale { get; set; }
 
@@ -41,7 +43,7 @@ public class SpriteAnimator
     public SpriteAnimator(string group, string animation = "default",
                           bool floorXY = true, float angle = 0f,
                           float sx = 1f, float sy = 1f,
-                          float ox = 0f, float oy = 0f, float dtMulti = 1f)
+                          float ox = 0f, float oy = 0f, float dtMulti = 1f, float layerDepth = 0f)
     {
         Visible = true;
         FloorXY = floorXY;
@@ -49,6 +51,7 @@ public class SpriteAnimator
         Scale = new Vector2(sx, sy);
         Offset = new Vector2(ox, oy);
         SpeedMultiplier = dtMulti;
+        LayerDepth = layerDepth;
 
         // Llama a Play para configurar la animación inicial
         Play(animation, true, group);
@@ -197,7 +200,7 @@ public class SpriteAnimator
             origin,                // Origen/Pivote (equivale a ox, oy)
             Scale,                 // Escala (¡Ojo! MonoGame maneja el flip con 'effects')
             effects,               // Aquí es donde van FlipX y FlipY
-            0f                     // Profundidad de capa (layer depth)
+            LayerDepth                     // Profundidad de capa (layer depth)
         );
     }
 

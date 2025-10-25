@@ -53,7 +53,7 @@ public class EntityManager
     // --- Equivalente a 'spawn' (¡Usando Genéricos!) ---
     // 'T' es el tipo de entidad a crear (ej. Player, Bullet)
     // 'where T : Entity' significa que 'T' DEBE ser una clase que hereda de 'Entity'.
-    public T Spawn<T>(Vector2 position, Vector2? velocity = null, Entity spawner = null) where T : Entity
+    public T Spawn<T>(Vector2? position, Vector2? velocity = null, Entity spawner = null) where T : Entity
     {
         int uid = PollNextUID();
 
