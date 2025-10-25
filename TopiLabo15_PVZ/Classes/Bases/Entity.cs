@@ -60,6 +60,8 @@ public abstract class Entity
         this.TimeCount += dt;
 
         this.Update(dt);
+
+        this.Sprite?.Update(dt);
     }
 
     // Equivalente a 'entity:applyPhysics(dt)'

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace TopiLabo15_PVZ.Data.Others
         {
             base.InitCallback();
 
-            Console.WriteLine("prupruprupruriurururur");
+            Debug.WriteLine("prupruprupruriurururur");
 
             Sprite = new SpriteAnimator("peaShooter", "idle");
         }   

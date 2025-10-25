@@ -5,6 +5,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Diagnostics;
 using TopiLabo15_PVZ.Data.GameStates;
 
 public class Game1 : Game
@@ -26,7 +27,7 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-        Console.WriteLine("aaaaaaa");
+        Debug.WriteLine("aaaaaaa");
 
         // Crea las instancias de los estados
         //_mainMenuState = new MainMenuState(); // Asumiendo que esta clase existe
@@ -46,7 +47,7 @@ public class Game1 : Game
         // Carga las animaciones (¡importante!)
         AnimationData.LoadContent(Content);
 
-        Console.WriteLine("PAPUUUUU");
+        Debug.WriteLine("PAPUUUUU");
 
         // ¡Inicia el juego cambiando al primer estado!
         GameManager.SwitchGameState(_playingState);
