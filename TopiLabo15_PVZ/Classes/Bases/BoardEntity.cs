@@ -8,17 +8,42 @@ namespace TopiLabo15_PVZ.Classes.Bases
     public class BoardEntity : Entity
     {
         const float EPSILON = Globals.EPSILON;
+        /* SC: Cambio por portected static readonly para que sean heredables a zombies.cs
         const float TILE_SIZE = Globals.TILE_SIZE;
-        const float HALF_TILE_SIZE = Globals.HALF_TILE_SIZE;
+        const float HALF_TILE_SIZE = Globals.HALF_TILE_SIZE;*/
+        protected static readonly float TILE_SIZE = Globals.TILE_SIZE;
+        protected static readonly float HALF_TILE_SIZE = Globals.HALF_TILE_SIZE;
         public readonly Vector2 BOARD_OFFSET = new Vector2(TILE_SIZE*1.0f, TILE_SIZE*2.0f); // Offset en pixeles, desde la esquina superior izquierda de la pantalla hasta la esquina superior izquierda del tablero.
 
         private float Z = 0.0f; // Altura sobre el tablero (en píxeles). Positivo es hacia arriba y negativo hacia abajo. No debe ser menor a 0.0f.
         public float ZVelocity = 0.0f; // Velocidad para Z (en píxeles por segundo). Positivo es hacia arriba y negativo hacia abajo.
         public float Gravity = 0.0f; // Acceleración para Z (en píxeles por segundo al cuadrado). Positivo es hacia arriba y negativo hacia abajo.
 
-        public BoardEntity(EntityManager manager, int uid, Vector2 position, Vector2? velocity, Entity spawner) 
+        // SC: Propiedades de Vida (HP)
+        public float MaxHealth { get; protected set; } = 1.0f; // La clase hija (Planta, Zombie) debe establecer esto.
+        public float Health { get; protected set; } = 1.0f;
+
+        public BoardEntity(EntityManager manager, int uid, Vector2 position, Vector2? velocity, Entity spawner, float maxHealth = 1.0f)
             : base(manager, uid, position, velocity, spawner)
         {
+            // SC: Inicializa la vida.
+            this.MaxHealth = maxHealth;
+            this.Health = maxHealth;
+        }
+
+        // SC: Método virtual para recibir daño.
+        public virtual void TakeDamage(float damageAmount, Entity damageDealer)
+        {
+            if (this.IsRemoved) return; // No dañar a una entidad ya marcada para eliminar.
+
+            this.Health -= damageAmount;
+            // Debug.WriteLine($"UID {this.GetUID()} took {damageAmount} damage, new HP: {this.Health}");
+
+            if (this.Health <= 0)
+            {
+                this.Health = 0;
+                this.Remove(); // Llama al método Remove() de la clase base Entity.
+            }
         }
 
         public void SetZ(float z) { Z = Math.Abs(z); }
