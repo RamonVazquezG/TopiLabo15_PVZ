@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Diagnostics; // Para Math.Max
+using System.Diagnostics;
+using TopiLabo15_PVZ.Data; // Para Math.Max
 
 namespace TopiLabo15_PVZ.Classes.Bases
 {
@@ -23,8 +24,8 @@ namespace TopiLabo15_PVZ.Classes.Bases
         public float MaxHealth { get; protected set; } = 1.0f; // La clase hija (Planta, Zombie) debe establecer esto.
         public float Health { get; protected set; } = 1.0f;
 
-        public BoardEntity(EntityManager manager, int uid, Vector2 position, Vector2? velocity, Entity spawner, float maxHealth = 1.0f)
-            : base(manager, uid, position, velocity, spawner)
+        public BoardEntity(EntityManager manager, int uid, EntityTypes type, int? subtype, Vector2 position, Vector2? velocity, Entity spawner, float maxHealth = 1.0f)
+            : base(manager, uid, type, subtype, position, velocity, spawner)
         {
             // SC: Inicializa la vida.
             this.MaxHealth = maxHealth;
@@ -37,11 +38,11 @@ namespace TopiLabo15_PVZ.Classes.Bases
             if (this.IsRemoved) return; // No dañar a una entidad ya marcada para eliminar.
 
             this.Health -= damageAmount;
-            // Debug.WriteLine($"UID {this.GetUID()} took {damageAmount} damage, new HP: {this.Health}");
+            Debug.WriteLine($"UID {this.GetUID()} took {damageAmount} damage, new HP: {this.Health}");
 
-            if (this.Health <= 0)
+            if (this.Health <= 0f)
             {
-                this.Health = 0;
+                this.Health = 0f;
                 this.Remove(); // Llama al método Remove() de la clase base Entity.
             }
         }
@@ -51,6 +52,9 @@ namespace TopiLabo15_PVZ.Classes.Bases
 
         public bool IsOnGround() { return this.GetZ() == 0.0f; }
 
+        //Obitnene o establece la posición en píxeles basado en coordenadas del tablero.
+        // boardX y boardY son índices de casilla, comenzando desde 0.
+        // En boardX son de 0 a 8 (9 columnas) y en boardY de 0 a 4 (5 filas).
         public void SetPositionFromBoard(int boardX, int boardY)
         {
             this.Position = new Vector2(
@@ -58,6 +62,9 @@ namespace TopiLabo15_PVZ.Classes.Bases
                 HALF_TILE_SIZE + BOARD_OFFSET.Y + boardY * TILE_SIZE
             );
         }
+        // Obtiene la posición en coordenadas del tablero basado en la posición en píxeles.
+        // JC: Esta funcion devuelve un Vector2 donde X e Y son índices en enteros de la casilla, pero el Vector2 como tal es de floats.
+        //     Por lo que a veces sera necesario convertir los valores X y Y a enteros con int().
         public Vector2 GetPositionToBoard()
         {
             return new Vector2(
@@ -118,7 +125,13 @@ namespace TopiLabo15_PVZ.Classes.Bases
             this.SetZ( Math.Max(0.0f, this.GetZ() + ZVelocity * dt) ); // Asegura que Z no sea negativa si ZVelocity es negativa.
         }
 
-        
+        public override void PostPhysicsCallback(float dt)
+        {
+            if (this.Hitbox == null) { return; }
+            if (this.Hitbox.LaneHash == null) { return; }
+
+            this.Hitbox.LaneHash = (int?)this.GetPositionToBoard().Y;
+        }
         public override void DrawSpriteCallback(SpriteBatch spriteBatch)
         {
             Vector2 PositionWithZ = new Vector2(Position.X, Position.Y - GetZ());

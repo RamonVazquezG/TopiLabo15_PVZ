@@ -12,7 +12,7 @@ namespace TopiLabo15_PVZ.Data.Others
     public class Prueba : BoardEntity
     {
         public Prueba(EntityManager manager, int uid, Vector2 position, Vector2? velocity, Entity spawner) 
-            : base(manager, uid, position, velocity, spawner)
+            : base(manager, uid, EntityTypes.None, null, position, velocity, spawner)
         {
         }
 

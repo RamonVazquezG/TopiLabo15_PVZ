@@ -15,8 +15,8 @@ namespace TopiLabo15_PVZ.Classes.Entities
         private float _eatTimer = 0.0f;
         private Plant _currentTarget = null; // La planta que está comiendo
 
-        public Zombie(EntityManager manager, int uid, int laneY, float maxHealth)
-            : base(manager, uid, Vector2.Zero, Vector2.Zero, null, maxHealth)
+        public Zombie(EntityManager manager, int uid, int? subtype, int laneY, float maxHealth)
+            : base(manager, uid, Data.EntityTypes.Zombie, subtype, Vector2.Zero, Vector2.Zero, null, maxHealth)
         {
             this.LaneY = laneY;
 
@@ -27,27 +27,15 @@ namespace TopiLabo15_PVZ.Classes.Entities
 
             this.Position = new Vector2(startX, startY);
 
+            this.SetPositionFromBoard(9, laneY); // Coloca el zombi en la columna 9 (fuera de la pantalla, pero cercas de la orilla).
+
             // Los zombies se mueven hacia la izquierda
             this.Velocity = new Vector2(-MoveSpeedPixelsPerSecond, 0);
         }
 
         public override void UpdateCallback(float dt)
         {
-            base.UpdateCallback(dt);
-
-            // 1. Buscar una planta para comer
-            // ESTA ES LA PARTE MÁS COMPLEJA. Necesitarás un sistema de colisiones.
-            // Por ahora, simulamos una búsqueda simple:
-
-            // _currentTarget = Manager.Find<Plant>(p => 
-            //     p.LaneY == this.LaneY && 
-            //     MathF.Abs(p.Position.X - this.Position.X) < 20 // Si está muy cerca
-            // );
-
-            // Simulación simple (esto debes reemplazarlo con lógica de colisión real):
-            CheckForPlants();
-
-            // 2. Lógica de comer
+            // Lógica de comer
             if (_currentTarget != null)
             {
                 // Si tiene un objetivo, deja de moverse
@@ -80,23 +68,6 @@ namespace TopiLabo15_PVZ.Classes.Entities
                     IsEating = false;
                     this.Velocity = new Vector2(-MoveSpeedPixelsPerSecond, 0);
                 }
-            }
-        }
-
-        // Esto es un placeholder. Necesitarás una forma de detectar colisiones.
-        // Podrías usar los Hitbox de tus entidades o pedirle al EntityManager
-        // que te dé las plantas en tu carril.
-        private void CheckForPlants()
-        {
-            if (_currentTarget != null && _currentTarget.IsRemoved)
-            {
-                _currentTarget = null; // El objetivo murió
-            }
-
-            if (_currentTarget == null)
-            {
-                // Lógica para encontrar una nueva planta
-                // _currentTarget = ...
             }
         }
     }

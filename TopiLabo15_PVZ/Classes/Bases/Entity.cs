@@ -3,18 +3,23 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Diagnostics;
+using TopiLabo15_PVZ.Data;
 
 // Equivalente a 'Entity: Object'
 public abstract class Entity
 {
     // --- Propiedades Públicas (Gestión Interna) ---
 
-    // Referencia al manager que nos creó (equivale a self:getCorrespondingEntityManager())
+    // Referencia al manager que lo creó.
     public EntityManager Manager { get; private set; }
 
-    // ID único (equivale a self:getUID())
+    // ID único en la lista de entidades del EntityManager.
     private readonly int UID;
     public int GetUID() => UID;
+
+    // Tipo de entidad (ej. "Plant", "Zombie", "Pickup", "UI", etc.)
+    public readonly EntityTypes TYPE;
+    public readonly int? SUB_TYPE;
 
     // El que nos "disparó" o creó (ej. el jugador que dispara una bala)
     public Entity Spawner { get; private set; }
@@ -27,7 +32,7 @@ public abstract class Entity
     public double TimeCount { get; private set; }
 
     // --- Banderas de Ciclo de Vida ---
-    // Equivale a self._inited (true por defecto)
+    // Marca si una entidad ha sido inicializada y por ende se le ha llamado su initCallback().
     public bool IsInited { get; set; } = true;
 
     // Equivale a self._remove (false por defecto)
@@ -41,10 +46,12 @@ public abstract class Entity
     // --- Constructor (Equivale a Entity:new) ---
     //Una entidad no puede crearse sin un EntityManager que la gestione.
     //Por lo que solo se pueden instanciar entidades desde un EntityManager.
-    public Entity(EntityManager manager, int uid, Vector2? position, Vector2? velocity, Entity spawner)
+    public Entity(EntityManager manager, int uid, EntityTypes type, int? subtype, Vector2? position, Vector2? velocity, Entity spawner)
     {
         this.Manager = manager;
         this.UID = uid;
+        this.TYPE = type;
+        this.SUB_TYPE = subtype;
         this.Position = position ?? Vector2.Zero; // Si position es nulo, usa Vector2.Zero
         this.Velocity = velocity ?? Vector2.Zero; // x2
         this.Spawner = spawner;
@@ -97,7 +104,7 @@ public abstract class Entity
 
     // --- Callbacks Virtuales (reemplazan 'Entity:setCallback') ---
     // Las clases hijas (como 'Player') pueden hacer 'override' de estos métodos para añadir su propia lógica.
-    public virtual void InitCallback() { } // Llamado una vez, en el primer frame de 'Update'
+    public virtual void InitCallback() { } // Llamado una vez al inicializarce, en el primer frame de 'Update'. Aquí puede ir la lógica de configuración inicial, pero algunos componentes como el SpriteAnimator deben inicializarce aqui y no en el constructor.
 
     public virtual void SpawnedCallback(Entity spawner) { } // Llamado después de Init, si 'Spawner' no es nulo. Se utilizas cuando una entidad crea otra.
 
@@ -115,4 +122,6 @@ public abstract class Entity
     public virtual void OnRemove() { } // Llamado cuando la entidad se marca para eliminar (IsRemoved = true)
 
     public virtual void RemovedCallback() { } // Llamado por el EntityManager justo antes de ser purgado de la lista
+
+    public virtual void HitboxCallback(Entity other) { } // Llamado cuando esta entidad colisiona con otra
 }

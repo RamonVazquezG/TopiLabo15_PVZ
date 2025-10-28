@@ -30,7 +30,5 @@
     <Folder Include="Classes\Heredates\" />
     <Folder Include="Data\PickUps\" />
     <Folder Include="Data\UI\" />
-    <Folder Include="Data\Zombies\" />
-    <Folder Include="Data\Plants\" />
   </ItemGroup>
 </Project>

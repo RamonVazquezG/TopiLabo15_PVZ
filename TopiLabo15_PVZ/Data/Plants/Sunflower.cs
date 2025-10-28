@@ -1,6 +1,7 @@
 ﻿using TopiLabo15_PVZ.Classes.Bases;
+using TopiLabo15_PVZ.Classes.Entities;
 
-namespace TopiLabo15_PVZ.Classes.Entities.Plants
+namespace TopiLabo15_PVZ.Data.Plants
 {
     public class Sunflower : Plant
     {
@@ -11,7 +12,7 @@ namespace TopiLabo15_PVZ.Classes.Entities.Plants
         private float _sunTimer = 0.0f;
 
         public Sunflower(EntityManager manager, int uid, int boardX, int boardY)
-            : base(manager, uid, boardX, boardY)
+            : base(manager, uid, (int?)PlantSubtypes.SunFlower, boardX, boardY)
         {
             // Establece las estadísticas específicas del Girasol
             this.SunCost = 50;

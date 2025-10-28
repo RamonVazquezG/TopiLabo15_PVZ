@@ -17,7 +17,6 @@ namespace TopiLabo15_PVZ.Data.GameStates
         public override void OnInIt()
         {
             patio = new SpriteAnimator("patio", "default");
-            //patio.LayerDepth = -0.001f;
 
             Console.WriteLine("PlayingGameState init");
             // Aquí puedes inicializar entidades específicas para este estado

@@ -128,4 +128,16 @@ public class EntityManager
         }
         spawnedThisFrame.Clear();
     }
+
+    public void HitboxUpdate()
+    {
+        foreach (var pair in entities)
+        {
+            Entity entity = pair.Value;
+            if (entity.Hitbox != null)
+            {
+                entity.Hitbox.CheckHitboxHash(entities);
+            }
+        }
+    }
 }

@@ -62,6 +62,8 @@ public abstract class GameState
         EntityManager.Update(dt);
 
         this.PostUpdateCallback(dt);
+
+        EntityManager.HitboxUpdate();
     }
 
     // Equivale a draw()

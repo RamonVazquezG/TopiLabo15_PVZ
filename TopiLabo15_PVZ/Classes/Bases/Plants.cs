@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using TopiLabo15_PVZ.Classes.Bases; // Asegúrate que el namespace sea correcto
+using TopiLabo15_PVZ.Classes.Bases;
+using TopiLabo15_PVZ.Data; // Asegúrate que el namespace sea correcto
 
 namespace TopiLabo15_PVZ.Classes.Entities
 {
@@ -16,9 +17,9 @@ namespace TopiLabo15_PVZ.Classes.Entities
 
         // Vida estándar de una planta
         private const float DEFAULT_PLANT_HEALTH = 300.0f;
-
-        public Plant(EntityManager manager, int uid, int boardX, int boardY)
-            : base(manager, uid, Vector2.Zero, Vector2.Zero, null, DEFAULT_PLANT_HEALTH) // Llama al constructor base con la vida
+        
+        public Plant(EntityManager manager, int uid, int? subtype, int boardX, int boardY)
+            : base(manager, uid, EntityTypes.Plant, subtype, Vector2.Zero, Vector2.Zero, null, DEFAULT_PLANT_HEALTH) // Llama al constructor base con la vida
         {
             this.BoardX = boardX;
             this.BoardY = boardY;

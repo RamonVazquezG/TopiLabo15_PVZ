@@ -1,6 +1,7 @@
 ﻿using TopiLabo15_PVZ.Classes.Bases;
+using TopiLabo15_PVZ.Classes.Entities;
 
-namespace TopiLabo15_PVZ.Classes.Entities.Plants
+namespace TopiLabo15_PVZ.Data.Plants
 {
     public class Peashooter : Plant
     {
@@ -11,7 +12,7 @@ namespace TopiLabo15_PVZ.Classes.Entities.Plants
         private float _shootTimer = 0.0f;
 
         public Peashooter(EntityManager manager, int uid, int boardX, int boardY)
-            : base(manager, uid, boardX, boardY)
+            : base(manager, uid, (int?)PlantSubtypes.PeaShooter, boardX, boardY)
         {
             this.SunCost = 100;
             this.RechargeTime = 7.5f;
