@@ -1,4 +1,5 @@
-﻿using TopiLabo15_PVZ.Classes.Bases;
+﻿using System.Diagnostics;
+using TopiLabo15_PVZ.Classes.Bases;
 using TopiLabo15_PVZ.Classes.Entities;
 
 namespace TopiLabo15_PVZ.Data.Plants
@@ -11,11 +12,17 @@ namespace TopiLabo15_PVZ.Data.Plants
 
         private float _shootTimer = 0.0f;
 
-        public Peashooter(EntityManager manager, int uid, int boardX, int boardY)
+        public Peashooter(EntityManager manager, int boardX, int boardY)
             : base(manager, (int?)PlantSubtypes.PeaShooter, boardX, boardY)
         {
             this.SunCost = 100;
             this.RechargeTime = 7.5f;
+        }
+
+        public override void InitCallback()
+        {
+            base.InitCallback();
+            Sprite = new SpriteAnimator("peaShooter", "idle");
         }
 
         public override void UpdateCallback(float dt)

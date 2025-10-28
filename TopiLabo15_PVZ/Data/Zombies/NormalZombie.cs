@@ -28,8 +28,9 @@ namespace TopiLabo15_PVZ.Data.Zombies
 
         public override void InitCallback()
         {
+            base.InitCallback();
             this.Sprite = new SpriteAnimator("zombieNormal", "walk");
-            this.Hitbox = new Hitbox(this, this.LaneY, new Vector2(24f, 36f));
+            this.Sprite.LayerDepth = 0.5f; // Para que se dibuje encima de las plantas.
         }
 
         public override void UpdateCallback(float dt)
@@ -37,18 +38,11 @@ namespace TopiLabo15_PVZ.Data.Zombies
             // Lógica específica del Zombie Común (si la hay)
             base.UpdateCallback(dt);
 
-            // Por ejemplo, aquí iría la lógica de animación:
-            // if (IsEating) {
-            //     Sprite.Play("eat");
-            // } else {
-            //     Sprite.Play("walk");
-            // }
-        }
-
-        public override void OnRemove()
-        {
-            // Cuando el zombie muere (HP <= 0)
-            base.OnRemove();
+             if (IsEating) {
+                 Sprite.Play("eat");
+             } else {
+                 Sprite.Play("walk");
+             }
         }
     }
 }

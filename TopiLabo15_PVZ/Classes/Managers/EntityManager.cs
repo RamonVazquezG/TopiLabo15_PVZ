@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq; // Necesario para .ToList()
 
 public class EntityManager
@@ -144,6 +145,7 @@ public class EntityManager
             Entity entity = pair.Value;
             if (entity.Hitbox != null)
             {
+                //Debug.WriteLine("Checking hitbox for entity UID: " + entity.GetUID());
                 entity.Hitbox.CheckHitboxHash(entities);
             }
         }

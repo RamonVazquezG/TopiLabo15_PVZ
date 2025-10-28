@@ -31,6 +31,11 @@ namespace TopiLabo15_PVZ.Classes.Entities
             this.Velocity = Vector2.Zero;
         }
 
+        public override void InitCallback()
+        {
+            this.Hitbox = new Hitbox(this, this.BoardY, new Vector2(10f, 10f));
+        }
+
         public override void UpdateCallback(float dt)
         {
             // Lógica común de todas las plantas (si la hay)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Diagnostics;
 using TopiLabo15_PVZ.Classes.Bases;
 using TopiLabo15_PVZ.Data; // Asegúrate que el namespace sea correcto
 
@@ -26,6 +27,11 @@ namespace TopiLabo15_PVZ.Classes.Entities
 
             // Los zombies se mueven hacia la izquierda
             this.Velocity = new Vector2(-MoveSpeedPixelsPerSecond, 0);
+        }
+
+        public override void InitCallback()
+        {
+            this.Hitbox = new Hitbox(this, this.LaneY, new Vector2(12f, 18f)); //Si este no es el tamaño que se quiere, solo haz override sin llamar base.InitCallback e inicializa el Hitbox a tu manera.
         }
 
         public override void UpdateCallback(float dt)
@@ -73,6 +79,7 @@ namespace TopiLabo15_PVZ.Classes.Entities
         }
         public override void HitboxCallback(Entity other)
         {
+            Debug.WriteLine("Yo zombi comer");
             if (other.TYPE == EntityTypes.Plant)
             {
                 Plant plant = (Plant)other;

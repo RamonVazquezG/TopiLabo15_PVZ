@@ -100,7 +100,7 @@ public class SpriteAnimator
     }
 
     // --- Equivalente a Sprite:play ---
-    public void Play(string animation, bool resetFrame = true, string group = null)
+    public void Play(string animation, bool resetFrame = false, string group = null)
     {
         // Cambiar de grupo si se especifica uno nuevo
         if (group != null && currentGroupKey != group)
