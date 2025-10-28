@@ -31,7 +31,7 @@ namespace TopiLabo15_PVZ.Classes.Entities
 
         public override void InitCallback()
         {
-            this.Hitbox = new Hitbox(this, this.LaneY, new Vector2(12f, 18f)); //Si este no es el tamaño que se quiere, solo haz override sin llamar base.InitCallback e inicializa el Hitbox a tu manera.
+            this.Hitbox = new Hitbox(this, this.LaneY, new Vector2(20f, 30f)); //Si este no es el tamaño que se quiere, solo haz override sin llamar base.InitCallback e inicializa el Hitbox a tu manera.
         }
 
         public override void UpdateCallback(float dt)

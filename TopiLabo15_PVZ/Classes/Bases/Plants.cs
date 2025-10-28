@@ -33,7 +33,7 @@ namespace TopiLabo15_PVZ.Classes.Entities
 
         public override void InitCallback()
         {
-            this.Hitbox = new Hitbox(this, this.BoardY, new Vector2(10f, 10f));
+            this.Hitbox = new Hitbox(this, this.BoardY, new Vector2(20f, 20f));
         }
 
         public override void UpdateCallback(float dt)
