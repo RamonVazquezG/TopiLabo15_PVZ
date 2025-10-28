@@ -6,7 +6,7 @@
         Conehead = 1,
         Buckethead = 2,
 
-        PoleVaulting = 3, // JC: A partir de aqui lol xdddd
+        PoleVaulting = 3, // JC: A partir de aqui lol xdddd.
         Newspaper = 4,
         Football = 5,
         Dancing = 6,
