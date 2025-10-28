@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using TopiLabo15_PVZ.Classes.Bases; // Asegúrate que el namespace sea correcto
+using TopiLabo15_PVZ.Classes.Bases;
+using TopiLabo15_PVZ.Data; // Asegúrate que el namespace sea correcto
 
 namespace TopiLabo15_PVZ.Classes.Entities
 {
@@ -16,7 +17,7 @@ namespace TopiLabo15_PVZ.Classes.Entities
         private Plant _currentTarget = null; // La planta que está comiendo
 
         public Zombie(EntityManager manager, int uid, int? subtype, int laneY, float maxHealth)
-            : base(manager, uid, Data.EntityTypes.Zombie, subtype, Vector2.Zero, Vector2.Zero, null, maxHealth)
+            : base(manager, uid, EntityTypes.Zombie, subtype, Vector2.Zero, Vector2.Zero, null, maxHealth)
         {
             this.LaneY = laneY;
 
