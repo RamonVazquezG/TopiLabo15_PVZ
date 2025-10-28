@@ -10,14 +10,19 @@ public class Hitbox
     public Vector2 Size;
     public Vector2 Offset;
 
-    public Hitbox(Entity parentEntity, int? laneHash, Vector2 Size, Vector2 Offset)
+    /// <summary>
+    /// <param name="parentEntity">Un hitbox debe tener una referencia a la entidad que la esta creando. Una entidad solo tienen un hitbox y visceversa.</param>
+    /// <param name="laneHash">Se usa para que el hitbox solo cheque intersecciones si el otro hitbox esta en la misma fila que este. Si es nulo, checara todas las filas (seria util, por ejemplo, para hacer la explosion de la petacereza).</param>
+    /// <param name="Size">Se explica solo :v. El tamaño es en pixeles.</param>
+    /// <param name="Offset">Que tanto se debe de desplazar en pixeles el hitbox de su entidad padre. Si es nulo, se centrara perfectamente hacia la entidad.</param>
+    public Hitbox(Entity parentEntity, int? laneHash, Vector2 Size, Vector2? Offset = null)
     {
         this.Parent = parentEntity;
 
         this.LaneHash = laneHash;
 
         this.Size = Size;
-        this.Offset = Offset;
+        this.Offset = Offset ?? -Size/2f;
     }
 
     public Vector2 GetParentPosition()

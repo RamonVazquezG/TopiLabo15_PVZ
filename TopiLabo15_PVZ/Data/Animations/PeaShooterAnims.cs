@@ -13,7 +13,7 @@ namespace TopiLabo15_PVZ.Data.Animations
         {
             // 1. Cargar la textura
             // NOTA: MonoGame elimina el tipo de archivo (como el .png) y la ruta 'Content/'.
-            // "Content/peaShooterAnimTest.png" se vuelve "peaShooterAnimTest"
+            // Ejemplo, "Content/peaShooterAnimTest.png" se vuelve "peaShooterAnimTest"
             Texture2D peaShooterTex = content.Load<Texture2D>("peaShooterAnimTest");
 
             // 2. Crear el grupo.
@@ -45,7 +45,7 @@ namespace TopiLabo15_PVZ.Data.Animations
             peaShooterGrup.AddAnimation("shoot", peaShootShootAnim);
             peaShooterGrup.AddAnimation("projectile", peaShootProjectileAnim);
 
-            // 5. Añadir el grupo al diccionario principal
+            // 5. Añadir el grupo al diccionario principal. JC: Nunca olviden tambien instanciar esta clase en AnimationData.LoadContent().
             AnimationData.Add("peaShooter", peaShooterGrup);
         }
     }

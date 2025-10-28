@@ -12,7 +12,7 @@ namespace TopiLabo15_PVZ.Data.Plants
         private float _shootTimer = 0.0f;
 
         public Peashooter(EntityManager manager, int uid, int boardX, int boardY)
-            : base(manager, uid, (int?)PlantSubtypes.PeaShooter, boardX, boardY)
+            : base(manager, (int?)PlantSubtypes.PeaShooter, boardX, boardY)
         {
             this.SunCost = 100;
             this.RechargeTime = 7.5f;

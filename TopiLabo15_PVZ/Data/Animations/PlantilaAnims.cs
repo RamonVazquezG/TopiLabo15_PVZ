@@ -7,9 +7,9 @@ using TopiLabo15_PVZ;
 
 namespace TopiLabo15_PVZ.Data.Animations
 {
-    public class PatioAnims
+    public class PlantilaAnims
     {
-        public PatioAnims(ContentManager content)
+        public PlantilaAnims(ContentManager content)
         {
             // 1. Cargar la textura
             // NOTA: MonoGame elimina el tipo de archivo (como el .png) y la ruta 'Content/'.
@@ -27,7 +27,7 @@ namespace TopiLabo15_PVZ.Data.Animations
             grup.AddAnimation("default", anim);
 
             // 5. Añadir el grupo al diccionario principal. JC: Nunca olviden tambien instanciar esta clase en AnimationData.LoadContent().
-            AnimationData.Add("patio", grup);
+            AnimationData.Add("plantilla", grup);
         }
     }
 }

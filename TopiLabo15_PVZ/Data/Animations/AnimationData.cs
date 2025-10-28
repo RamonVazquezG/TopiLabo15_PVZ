@@ -24,11 +24,13 @@ public static class AnimationData
     }
 
     // --- Carga de datos (Ejemplo) ---
-    // En tu juego real, llamarías a esta función una vez al inicio.
+    // llamada una vez al inicio.
     // 'Content' es el 'ContentManager' de MonoGame.
     public static void LoadContent(ContentManager content)
     {
+        //new PlantillaAnims(content);
         new PeaShooterAnims(content); //Con solo hacer una instancia, se registran las animaciones.
         new PatioAnims(content);
+        new ZombiesAnims(content);
     }
 }

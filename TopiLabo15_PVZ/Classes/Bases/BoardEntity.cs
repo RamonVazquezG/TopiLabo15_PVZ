@@ -24,8 +24,8 @@ namespace TopiLabo15_PVZ.Classes.Bases
         public float MaxHealth { get; protected set; } = 1.0f; // La clase hija (Planta, Zombie) debe establecer esto.
         public float Health { get; protected set; } = 1.0f;
 
-        public BoardEntity(EntityManager manager, int uid, EntityTypes type, int? subtype, Vector2 position, Vector2? velocity, Entity spawner, float maxHealth = 1.0f)
-            : base(manager, uid, type, subtype, position, velocity, spawner)
+        public BoardEntity(EntityManager manager, EntityTypes type, int? subtype, Vector2 position, Vector2? velocity, Entity spawner, float maxHealth = 1.0f)
+            : base(manager, type, subtype, position, velocity, spawner)
         {
             // SC: Inicializa la vida.
             this.MaxHealth = maxHealth;

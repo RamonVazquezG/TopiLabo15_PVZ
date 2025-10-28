@@ -16,19 +16,13 @@ namespace TopiLabo15_PVZ.Classes.Entities
         private float _eatTimer = 0.0f;
         private Plant _currentTarget = null; // La planta que está comiendo
 
-        public Zombie(EntityManager manager, int uid, int? subtype, int laneY, float maxHealth)
-            : base(manager, uid, EntityTypes.Zombie, subtype, Vector2.Zero, Vector2.Zero, null, maxHealth)
+        public Zombie(EntityManager manager, int? subtype, int laneY, float maxHealth)
+            : base(manager, EntityTypes.Zombie, subtype, Vector2.Zero, Vector2.Zero, null, maxHealth)
         {
             this.LaneY = laneY;
 
             // Posición inicial (fuera de la pantalla, a la derecha)
-            // Asumimos un ancho de pantalla, ej. 1280. Deberías obtener esto de Globals.
-            float startX = 1300; // O Globals.SCREEN_WIDTH + TILE_SIZE
-            float startY = HALF_TILE_SIZE + BOARD_OFFSET.Y + laneY * TILE_SIZE;
-
-            this.Position = new Vector2(startX, startY);
-
-            this.SetPositionFromBoard(9, laneY); // Coloca el zombi en la columna 9 (fuera de la pantalla, pero cercas de la orilla).
+            this.SetPositionFromBoard(10, laneY); // Coloca el zombi en la columna 9 (fuera de la pantalla, pero cercas de la orilla).
 
             // Los zombies se mueven hacia la izquierda
             this.Velocity = new Vector2(-MoveSpeedPixelsPerSecond, 0);
@@ -69,6 +63,20 @@ namespace TopiLabo15_PVZ.Classes.Entities
                     IsEating = false;
                     this.Velocity = new Vector2(-MoveSpeedPixelsPerSecond, 0);
                 }
+            }
+        }
+
+        public override void PostPhysicsCallback(float dt)
+        {
+            this.LaneY = (int)this.GetPositionToBoard().Y;
+            base.PostPhysicsCallback(dt);
+        }
+        public override void HitboxCallback(Entity other)
+        {
+            if (other.TYPE == EntityTypes.Plant)
+            {
+                Plant plant = (Plant)other;
+                _currentTarget = plant;
             }
         }
     }

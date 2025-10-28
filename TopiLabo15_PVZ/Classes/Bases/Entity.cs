@@ -14,7 +14,7 @@ public abstract class Entity
     public EntityManager Manager { get; private set; }
 
     // ID único en la lista de entidades del EntityManager.
-    private readonly int UID;
+    private int UID = -1;
     public int GetUID() => UID;
 
     // Tipo de entidad (ej. "Plant", "Zombie", "Pickup", "UI", etc.)
@@ -41,15 +41,19 @@ public abstract class Entity
     // --- Listas de Componentes ---
     public SpriteAnimator Sprite { get; set; }
     public int StateIndex { get; private set; }
-    public Hitbox Hitbox { get; private set; }
+    public Hitbox Hitbox { get; set; }
+
+    public void SetUIDOnce(int uid) {
+        if (this.UID != -1) { return; }
+        this.UID = uid;
+    }
 
     // --- Constructor (Equivale a Entity:new) ---
     //Una entidad no puede crearse sin un EntityManager que la gestione.
     //Por lo que solo se pueden instanciar entidades desde un EntityManager.
-    public Entity(EntityManager manager, int uid, EntityTypes type, int? subtype, Vector2? position, Vector2? velocity, Entity spawner)
+    public Entity(EntityManager manager, EntityTypes type, int? subtype, Vector2? position, Vector2? velocity, Entity spawner)
     {
         this.Manager = manager;
-        this.UID = uid;
         this.TYPE = type;
         this.SUB_TYPE = subtype;
         this.Position = position ?? Vector2.Zero; // Si position es nulo, usa Vector2.Zero
@@ -58,6 +62,8 @@ public abstract class Entity
 
         this.FrameCount = 0;
         this.TimeCount = 0.0;
+
+        manager.SpawnInstance(this);
     }
 
     // --- Lógica Principal de Actualización ---

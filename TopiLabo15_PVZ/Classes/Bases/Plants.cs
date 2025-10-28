@@ -18,8 +18,8 @@ namespace TopiLabo15_PVZ.Classes.Entities
         // Vida estándar de una planta
         private const float DEFAULT_PLANT_HEALTH = 300.0f;
         
-        public Plant(EntityManager manager, int uid, int? subtype, int boardX, int boardY)
-            : base(manager, uid, EntityTypes.Plant, subtype, Vector2.Zero, Vector2.Zero, null, DEFAULT_PLANT_HEALTH) // Llama al constructor base con la vida
+        public Plant(EntityManager manager, int? subtype, int boardX, int boardY)
+            : base(manager, EntityTypes.Plant, subtype, Vector2.Zero, Vector2.Zero, null, DEFAULT_PLANT_HEALTH) // Llama al constructor base con la vida
         {
             this.BoardX = boardX;
             this.BoardY = boardY;

@@ -12,7 +12,7 @@ namespace TopiLabo15_PVZ.Data.Plants
         private float _sunTimer = 0.0f;
 
         public Sunflower(EntityManager manager, int uid, int boardX, int boardY)
-            : base(manager, uid, (int?)PlantSubtypes.SunFlower, boardX, boardY)
+            : base(manager, (int?)PlantSubtypes.SunFlower, boardX, boardY)
         {
             // Establece las estadísticas específicas del Girasol
             this.SunCost = 50;

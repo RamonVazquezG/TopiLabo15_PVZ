@@ -14,8 +14,8 @@ namespace TopiLabo15_PVZ.Data.Zombies
         private const float ZOMBIE_SPEED_TILE_PER_SEC = 1.0f / 4.7f; // Casillas por segundo. JC: Que especifico, pero si es de echo la velocidad del juego oriignal xdddd.
         private const float ZOMBIE_EAT_DAMAGE = 100.0f; // Daño por segundo
 
-        public NormalZombie(EntityManager manager, int uid, int laneY)
-            : base(manager, uid, (int?)ZombieSubtypes.Normal, laneY, ZOMBIE_HEALTH)
+        public NormalZombie(EntityManager manager, int laneY)
+            : base(manager, (int?)ZombieSubtypes.Normal, laneY, ZOMBIE_HEALTH)
         {
             // Convertimos la velocidad de "casillas/seg" a "píxeles/seg"
             this.MoveSpeedPixelsPerSecond = ZOMBIE_SPEED_TILE_PER_SEC * TILE_SIZE;
@@ -24,6 +24,12 @@ namespace TopiLabo15_PVZ.Data.Zombies
             // Actualizamos la velocidad en la clase base
             // SC: Esta línea es la que causaba el error CS0246
             this.Velocity = new Vector2(-this.MoveSpeedPixelsPerSecond, 0);
+        }
+
+        public override void InitCallback()
+        {
+            this.Sprite = new SpriteAnimator("zombieNormal", "walk");
+            this.Hitbox = new Hitbox(this, this.LaneY, new Vector2(24f, 36f));
         }
 
         public override void UpdateCallback(float dt)

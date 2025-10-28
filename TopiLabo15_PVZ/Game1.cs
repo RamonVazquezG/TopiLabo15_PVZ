@@ -61,7 +61,7 @@ public class Game1 : Game
         // 1. Calcular dt.
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds; //dt es cuanto tiempo ha pasado desde el último frame. Es importante para que el juego corra igual de rápido en computadoras rápidas y lentas.
         
-        dt = MathF.Min(dt, 1f/30f); // Limita dt a un máximo de 30 FPS para evitar problemas en caso de lag severo (Se puede conseguir facilmente agarrando la ventana por mucho tiempo).
+        dt = MathF.Min(dt, 0.03333333333333333333333333333333f); // Limita dt a un máximo de 30 FPS para evitar problemas en caso de lag severo (Se puede conseguir facilmente agarrando la ventana por mucho tiempo).
 
         GameTime += dt;
 
