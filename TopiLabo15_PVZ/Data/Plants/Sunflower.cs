@@ -1,46 +1,58 @@
-﻿using TopiLabo15_PVZ.Classes.Bases;
+﻿using System;
+using System.Diagnostics;
+using TopiLabo15_PVZ.Classes.Bases;
 using TopiLabo15_PVZ.Classes.Entities;
+using TopiLabo15_PVZ.Data.GameStates;
+using TopiLabo15_PVZ.Data.Others;
 
 namespace TopiLabo15_PVZ.Data.Plants
 {
     public class Sunflower : Plant
     {
         // Estadísticas del Girasol
-        private const float SUN_PRODUCTION_TIME = 24.0f; // Segundos
-        private const int SUN_VALUE = 25;
+        private const float SUN_PRODUCTION_TIME = 22.0f; // Segundos
 
-        private float _sunTimer = 0.0f;
+        private float _sunTimer;
 
-        public Sunflower(EntityManager manager, int uid, int boardX, int boardY)
+        public Sunflower(EntityManager manager, int boardX, int boardY)
             : base(manager, (int?)PlantSubtypes.SunFlower, boardX, boardY)
         {
-            // Establece las estadísticas específicas del Girasol
-            this.SunCost = 50;
-            this.RechargeTime = 7.5f;
-            // La vida (300) ya se estableció en la clase base Plant
+            _sunTimer = SUN_PRODUCTION_TIME - (Random.Shared.NextSingle() * 3f + 3f); // Generar un sol de 3 a 6 segundos random restantes para que halla variedad.
+        }
 
-            _sunTimer = 10.0f; // Un delay inicial antes del primer sol
+        public override void InitCallback()
+        {
+            base.InitCallback();
+            this.Sprite = new SpriteAnimator("sunFlower", "idle");
         }
 
         public override void UpdateCallback(float dt)
         {
-            base.UpdateCallback(dt);
-
             _sunTimer += dt;
             if (_sunTimer >= SUN_PRODUCTION_TIME)
             {
-                _sunTimer = 0.0f; // Reinicia el contador
-                SpawnSun();
+                _sunTimer = Random.Shared.NextSingle() * -2f; ; // Delay random de hasta un segundo, para que sea un poco mas impredecible la generacion de soles, o algo asi :p
+                Sprite.Play("sunGive", true);
+                Debug.WriteLine("sun give at 0f");
+            }
+
+            if ( Sprite.IsPlaying("sunGive") )
+            {
+                if (Sprite.FrameIndex == 1 & Sprite.JustChangedFrame)
+                {
+                    SpawnSun();
+                }
+
+                if (Sprite.JustFinishedAnimation)
+                {
+                    Sprite.Play("idle", true);
+                }
             }
         }
 
         private void SpawnSun()
         {
-            // Aquí es donde crearías una entidad "Sun"
-            // Por ejemplo:
-            // Manager.CreateEntity<Sun>(this.Position, this);
-
-            // Debug.WriteLine($"Girasol (UID: {GetUID()}) produjo {SUN_VALUE} de sol.");
+            SunPickup sun = new SunPickup((PlayingGameState)this.Manager.GameState, this.Manager, BoardX, BoardY, this);
         }
     }
 }

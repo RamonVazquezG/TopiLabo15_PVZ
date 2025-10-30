@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Diagnostics;
 using TopiLabo15_PVZ.Classes.Bases;
 using TopiLabo15_PVZ.Data; // Asegúrate que el namespace sea correcto
@@ -88,6 +89,12 @@ namespace TopiLabo15_PVZ.Classes.Entities
                     _currentTarget = plant;
                 }
             }
+        }
+
+        public override void PreSpriteCallback(SpriteBatch spriteBatch)
+        {
+            base.PreSpriteCallback(spriteBatch);
+            this.Sprite.LayerDepth += 0.1f; // Asegura que los zombies se dibujen sobre las plantas
         }
     }
 }

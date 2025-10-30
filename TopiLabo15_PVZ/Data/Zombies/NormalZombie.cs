@@ -30,7 +30,6 @@ namespace TopiLabo15_PVZ.Data.Zombies
         {
             base.InitCallback();
             this.Sprite = new SpriteAnimator("zombieNormal", "walk");
-            this.Sprite.LayerDepth = 0.5f; // Para que se dibuje encima de las plantas.
         }
 
         public override void UpdateCallback(float dt)

@@ -29,8 +29,8 @@ public abstract class Entity
     public Vector2 Position; // Equivale a self.position
     public Vector2 Velocity; // Equivale a self.velocity
 
-    public long FrameCount { get; private set; }
-    public double TimeCount { get; private set; }
+    public long FrameCount { get;  set; }
+    public double TimeCount { get;  set; }
 
     // --- Banderas de Ciclo de Vida ---
     // Marca si una entidad ha sido inicializada y por ende se le ha llamado su initCallback().
@@ -93,7 +93,7 @@ public abstract class Entity
     // --- Constructor (Equivale a Entity:new) ---
     //Una entidad no puede crearse sin un EntityManager que la gestione.
     //Por lo que solo se pueden instanciar entidades desde un EntityManager.
-    public Entity(EntityManager manager, EntityTypes type, int? subtype, Vector2? position, Vector2? velocity, Entity spawner)
+    public Entity(EntityManager manager, EntityTypes type, int? subtype, Vector2? position, Vector2? velocity, Entity? spawner)
     {
         this.Manager = manager;
         this.TYPE = type;
@@ -131,13 +131,15 @@ public abstract class Entity
     // para reemplazar el obsoleto 'drawEntities' del EntityManager)
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        // Llama al callback antes de dibujar sprites
-        this.PreSpriteCallback();
+        if (this.Sprite != null) { 
+            // Llama al callback antes de dibujar sprites
+            this.PreSpriteCallback(spriteBatch);
 
-        if (this.Sprite != null) { this.DrawSpriteCallback(spriteBatch); }
+            this.DrawSpriteCallback(spriteBatch); 
 
-        // Llama al callback después de dibujar sprites
-        this.PostSpriteCallback();
+            // Llama al callback después de dibujar sprites
+            this.PostSpriteCallback(spriteBatch);
+        }
     }
 
     // --- Gestión de Eliminación ---
@@ -165,9 +167,9 @@ public abstract class Entity
     public virtual void PrePhysicsCallback(float dt) { } // Llamado justo antes de 'ApplyPhysics'
     public virtual void PostPhysicsCallback(float dt) { } // Llamado justo después de 'ApplyPhysics'
 
-    public virtual void PreSpriteCallback() { } // Llamado antes de la lógica de dibujo de sprites
+    public virtual void PreSpriteCallback(SpriteBatch spriteBatch) { } // Llamado antes de la lógica de dibujo de sprites
     public virtual void DrawSpriteCallback(SpriteBatch spriteBatch) { this.Sprite.Draw(spriteBatch, this.Position); }
-    public virtual void PostSpriteCallback() { } // Llamado después de la lógica de dibujo de sprites
+    public virtual void PostSpriteCallback(SpriteBatch spriteBatch) { } // Llamado después de la lógica de dibujo de sprites
 
     public virtual void OnRemove() { } // Llamado cuando la entidad se marca para eliminar (IsRemoved = true)
 

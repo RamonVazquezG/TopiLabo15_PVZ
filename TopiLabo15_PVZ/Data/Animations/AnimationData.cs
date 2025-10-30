@@ -32,5 +32,8 @@ public static class AnimationData
         new PeaShooterAnims(content); //Con solo hacer una instancia, se registran las animaciones.
         new PatioAnims(content);
         new ZombiesAnims(content);
+        new WalnutAnims(content);
+        new SunPickupAnims(content);
+        new SunFlowerAnims(content);
     }
 }

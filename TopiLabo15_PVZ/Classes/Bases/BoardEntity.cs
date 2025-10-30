@@ -120,7 +120,7 @@ namespace TopiLabo15_PVZ.Classes.Bases
             // Moverlo un poqutio arriba, para que cuando se use con IsOnGround no se quede atascado en el suelo, o algo asi :p
             if (this.IsOnGround()) { this.SetZ(EPSILON); }
             this.ZVelocity = initialVelocityZ; // Asegura que sea positivo.
-            this.Gravity = gravity;
+            this.Gravity = -gravity;
         }
         public override void ApplyPhysics(float dt) // Maneja la posición Z (altura sobre el tablero, se podria utilizar para zombies que hagan saltos).
         {
@@ -137,6 +137,11 @@ namespace TopiLabo15_PVZ.Classes.Bases
             if (this.Hitbox.LaneHash == null) { return; }
 
             this.Hitbox.LaneHash = (int?)this.GetPositionToBoard().Y;
+        }
+
+        public override void PreSpriteCallback(SpriteBatch spriteBatch)
+        {
+            Sprite.LayerDepth = (Position.X + Position.Y) * 0.00001f;
         }
         public override void DrawSpriteCallback(SpriteBatch spriteBatch)
         {
