@@ -1,4 +1,4 @@
-﻿// --- EntityManager.cs ---
+﻿    // --- EntityManager.cs ---
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -143,10 +143,16 @@ public class EntityManager
         foreach (var pair in entities)
         {
             Entity entity = pair.Value;
-            if (entity.Hitbox != null)
+
+            if (entity.IsRemoved || entity.IsInited) { return; }
+
+            // Soporta múltiples hitboxes por entidad
+            if (entity.Hitboxes == null || entity.Hitboxes.Count == 0)
+                continue;
+
+            foreach (var hb in entity.Hitboxes)
             {
-                //Debug.WriteLine("Checking hitbox for entity UID: " + entity.GetUID());
-                entity.Hitbox.CheckHitboxHash(entities);
+                hb?.CheckHitboxHash(entities);
             }
         }
     }

@@ -68,7 +68,7 @@ public class Game1 : Game
         // 2. Actualiza el input antes que el juego en si.
         // Esto "prepara" todas las propiedades (IsPressed, IsHeld) para este frame.
         MouseInput.Update();
-
+ 
 
         // 3. Actualiza tu GameManager (el juego en si).
         // Ahora, cualquier estado de juego o entidad que se actualice puede checar de forma segura las propiedades de MouseInput.

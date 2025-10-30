@@ -8,7 +8,7 @@ namespace TopiLabo15_PVZ.Data.Zombies
     public class NormalZombie : Zombie
     {
         // Estadísticas del Zombie Común
-        private const float ZOMBIE_HEALTH = 270.0f;
+        private const float ZOMBIE_HEALTH = 200.0f;
         private const float TILE_SIZE = Globals.TILE_SIZE;
         // SC: TILE_SIZE se obtiene de Globals, que está en .Bases
         private const float ZOMBIE_SPEED_TILE_PER_SEC = 1.0f / 4.7f; // Casillas por segundo. JC: Que especifico, pero si es de echo la velocidad del juego oriignal xdddd.

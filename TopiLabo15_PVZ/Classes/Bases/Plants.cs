@@ -11,6 +11,8 @@ namespace TopiLabo15_PVZ.Classes.Entities
         public int SunCost { get; protected set; } = 9999;
         public float RechargeTime { get; protected set; } = 99.0f;
 
+        public bool HasZombieSight = false;
+
         // --- Estado ---
         public int BoardX { get; private set; }
         public int BoardY { get; private set; }
@@ -33,13 +35,12 @@ namespace TopiLabo15_PVZ.Classes.Entities
 
         public override void InitCallback()
         {
-            this.Hitbox = new Hitbox(this, this.BoardY, new Vector2(20f, 20f));
+            this.Hitbox = new Hitbox(this, this.BoardY, new Vector2(20f, 20f), null, "plantHurtbox");
         }
 
-        public override void UpdateCallback(float dt)
+        public override void PostUpdateCallback(float dt)
         {
-            // Lógica común de todas las plantas (si la hay)
-            base.UpdateCallback(dt);
+            this.HasZombieSight = false;
         }
     }
 }

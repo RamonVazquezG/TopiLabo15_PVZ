@@ -1,6 +1,7 @@
 ﻿// --- Entity.cs ---
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TopiLabo15_PVZ.Data;
@@ -33,7 +34,7 @@ public abstract class Entity
 
     // --- Banderas de Ciclo de Vida ---
     // Marca si una entidad ha sido inicializada y por ende se le ha llamado su initCallback().
-    public bool IsInited { get; set; } = true;
+    public bool IsInited { get; set; } = true; //Si es true, todavia no ha sido iniciado, si no pues no :v (aunque debio haber sido al revez (^^;).
 
     // Equivale a self._remove (false por defecto)
     public bool IsRemoved { get; private set; } = false;
@@ -41,7 +42,48 @@ public abstract class Entity
     // --- Listas de Componentes ---
     public SpriteAnimator Sprite { get; set; }
     public int StateIndex { get; private set; }
-    public Hitbox Hitbox { get; set; }
+    public List<Hitbox> Hitboxes { get; } = new List<Hitbox>();
+
+    // Compatibilidad: referencia al primer hitbox de la lista
+    [Obsolete("Usa 'Hitboxes' en su lugar. Esta propiedad referencia el primer hitbox de la lista.")]
+    public Hitbox Hitbox
+    {
+        get => Hitboxes.Count > 0 ? Hitboxes[0] : null;
+        set
+        {
+            if (value == null)
+            {
+                if (Hitboxes.Count > 0) Hitboxes.RemoveAt(0);
+                return;
+            }
+
+            // Asegurar la relación padre
+            if (value.Parent != this) value.Parent = this;
+
+            if (Hitboxes.Count == 0) Hitboxes.Add(value);
+            else Hitboxes[0] = value;
+        }
+    }
+
+    // Utilidades para gestionar múltiples hitboxes
+    public Hitbox AddHitbox(Hitbox hitbox)
+    {
+        if (hitbox == null) return null;
+        if (hitbox.Parent != this) hitbox.Parent = this;
+        Hitboxes.Add(hitbox);
+        return hitbox;
+    }
+
+    public bool RemoveHitbox(Hitbox hitbox)
+    {
+        if (hitbox == null) return false;
+        return Hitboxes.Remove(hitbox);
+    }
+
+    public void ClearHitboxes()
+    {
+        Hitboxes.Clear();
+    }
 
     public void SetUIDOnce(int uid) {
         if (this.UID != -1) { return; }
@@ -104,6 +146,8 @@ public abstract class Entity
     {
         if (IsRemoved) return; // No eliminar dos veces
 
+        this.ClearHitboxes();
+
         this.IsRemoved = true;
         this.OnRemove(); // Llama al trigger
     }
@@ -129,5 +173,5 @@ public abstract class Entity
 
     public virtual void RemovedCallback() { } // Llamado por el EntityManager justo antes de ser purgado de la lista
 
-    public virtual void HitboxCallback(Entity other) { } // Llamado cuando esta entidad colisiona con otra
+    public virtual void HitboxCallback(Entity other, Hitbox otherHitbox, string tag, string otherTag) { } // Llamado cuando esta entidad colisiona con otra
 }

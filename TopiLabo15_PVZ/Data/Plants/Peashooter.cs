@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Xna.Framework;
+using System;
+using System.Diagnostics;
 using TopiLabo15_PVZ.Classes.Bases;
 using TopiLabo15_PVZ.Classes.Entities;
 
@@ -23,6 +25,9 @@ namespace TopiLabo15_PVZ.Data.Plants
         {
             base.InitCallback();
             Sprite = new SpriteAnimator("peaShooter", "idle");
+
+            Hitbox sightHtibox = new Hitbox(this, this.BoardY, new Vector2(Globals.TILE_SIZE * 9f, 1f), new Vector2(), "sight");
+            AddHitbox(sightHtibox);
         }
 
         public override void UpdateCallback(float dt)
@@ -33,36 +38,40 @@ namespace TopiLabo15_PVZ.Data.Plants
             if (_shootTimer >= SHOOT_COOLDOWN)
             {
                 // Solo dispara si hay un zombie en el carril
-                if (IsZombieInLane())
+                if (this.HasZombieSight)
                 {
-                    _shootTimer = 0.0f;
-                    ShootPea();
+                    _shootTimer = Random.Shared.NextSingle() * -0.1f;
+                    Sprite.Play("shoot", true); // JC: Recuerden que el true hara que se reinicie la animacion desde el frame 0.
                 }
                 else
                 {
-                    _shootTimer = SHOOT_COOLDOWN; // No dejes que el timer se acumule
+                    _shootTimer = SHOOT_COOLDOWN; 
+                    Sprite.Play("idle");
                 }
             }
-        }
 
-        private bool IsZombieInLane()
-        {
-            // Lógica de detección de zombies.
-            // Deberías preguntar al EntityManager si hay algún Zombie
-            // en this.BoardY con una Position.X mayor a la tuya.
-            // return Manager.CheckForZombiesInLane(this.BoardY, this.Position.X);
-
-            return true; // Placeholder: Asume que siempre hay un zombie
+            if (Sprite.IsPlaying("shoot"))
+            {
+                if (Sprite.FrameIndex == 3 & Sprite.JustChangedFrame) { ShootPea(); }
+            }
         }
 
         private void ShootPea()
         {
-            // Aquí es donde crearías la entidad "Pea" (Guisante)
-            // El guisante debe heredar de BoardEntity y moverse hacia la derecha.
-            // Vector2 spawnPos = this.Position + new Vector2(20, -15); // Ajusta la pos
-            // Manager.CreateEntity<Pea>(spawnPos, PEA_DAMAGE, this);
+            //Debug.WriteLine("pea shoot");
 
-            // Debug.WriteLine($"Lanzaguisantes (UID: {GetUID()}) disparó un guisante.");
+            ProjectilePea pea = new ProjectilePea(this.Manager, PEA_DAMAGE, BoardX+1, BoardY);
+            pea.SetZ(8f);
+        }
+
+        public override void HitboxCallback(Entity other, Hitbox otherHitbox, string tag, string otherTag)
+        {
+            if (tag == "sight" && other.TYPE == EntityTypes.Zombie)
+            {
+                // Aquí podrías manejar la lógica cuando un zombie entra en el campo de visión
+                // Por ejemplo, podrías establecer una bandera o iniciar una animación
+                this.HasZombieSight = true;
+            }
         }
     }
 }

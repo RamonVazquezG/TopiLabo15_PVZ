@@ -32,6 +32,7 @@ namespace TopiLabo15_PVZ.Classes.Entities
         public override void InitCallback()
         {
             this.Hitbox = new Hitbox(this, this.LaneY, new Vector2(20f, 30f)); //Si este no es el tamaño que se quiere, solo haz override sin llamar base.InitCallback e inicializa el Hitbox a tu manera.
+            this.Hitbox.Offset.Y -= 5f; // Ajusta el offset vertical si es necesario
         }
 
         public override void UpdateCallback(float dt)
@@ -77,13 +78,15 @@ namespace TopiLabo15_PVZ.Classes.Entities
             this.LaneY = (int)this.GetPositionToBoard().Y;
             base.PostPhysicsCallback(dt);
         }
-        public override void HitboxCallback(Entity other)
+        public override void HitboxCallback(Entity other, Hitbox otherHitbox, string tag, string otherTag)
         {
-            Debug.WriteLine("Yo zombi comer");
             if (other.TYPE == EntityTypes.Plant)
             {
-                Plant plant = (Plant)other;
-                _currentTarget = plant;
+                if (otherTag.Equals("plantHurtbox"))
+                {
+                    Plant plant = (Plant)other;
+                    _currentTarget = plant;
+                }
             }
         }
     }

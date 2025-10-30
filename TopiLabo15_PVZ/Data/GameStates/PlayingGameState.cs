@@ -22,8 +22,12 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
             patio = new SpriteAnimator("patio", "default");
 
-            Peashooter peashooter = new Peashooter(this.EntityManager, 8, 2);
-            NormalZombie zombie = new NormalZombie(this.EntityManager, 2); // 2 es la fila del medio.
+            Peashooter peashooter = new Peashooter(this.EntityManager, 0, 1);
+            NormalZombie zombie = new NormalZombie(this.EntityManager, 1); 
+
+            peashooter = new Peashooter(this.EntityManager, 0, 2);
+            zombie = new NormalZombie(this.EntityManager, 2);
+            //zombie.SetPositionFromBoard(8, zombie.LaneY);
 
         }
 

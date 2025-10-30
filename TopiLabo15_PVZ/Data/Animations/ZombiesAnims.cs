@@ -20,13 +20,14 @@ namespace TopiLabo15_PVZ.Data.Animations
             var grup = new AnimationGroup(text, 48, 48);
 
             // 3. Crear animaciónes.
-            var walkAnim = new Animation(0, 24, 24);
+            int offsetY = 24 + (int)Globals.TILE_SIZE/2; // Ajuste vertical para centrar el sprite en el hitbox
+            var walkAnim = new Animation(0, 24, offsetY);
             walkAnim.AddFrame(0, new Frame(0.1f));
             walkAnim.AddFrame(1, new Frame(0.1f));
             walkAnim.AddFrame(2, new Frame(0.1f));
             walkAnim.AddFrame(3, new Frame(0.1f));
 
-            var eatAnim = new Animation(1, 24, 24);
+            var eatAnim = new Animation(1, 24, offsetY);
             eatAnim.AddFrame(0, new Frame(0.2f));
             eatAnim.AddFrame(1, new Frame(0.2f));
 
