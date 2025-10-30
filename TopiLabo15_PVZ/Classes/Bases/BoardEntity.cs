@@ -24,6 +24,8 @@ namespace TopiLabo15_PVZ.Classes.Bases
         public float MaxHealth { get; protected set; } = 1.0f; // La clase hija (Planta, Zombie) debe establecer esto.
         public float Health { get; protected set; } = 1.0f;
 
+        public bool IsDeath { get; protected set; } = false;
+
         public BoardEntity(EntityManager manager, EntityTypes type, int? subtype, Vector2 position, Vector2? velocity, Entity spawner, float maxHealth = 1.0f)
             : base(manager, type, subtype, position, velocity, spawner)
         {
@@ -33,17 +35,17 @@ namespace TopiLabo15_PVZ.Classes.Bases
         }
 
         // SC: Método virtual para recibir daño.
-        public virtual void TakeDamage(float damageAmount, Entity damageDealer)
+        public virtual void TakeDamage(float damageAmount, Entity damageDealer = null)
         {
             if (this.IsRemoved) return; // No dañar a una entidad ya marcada para eliminar.
 
             this.Health -= damageAmount;
-            Debug.WriteLine($"UID {this.GetUID()} took {damageAmount} damage, new HP: {this.Health}");
+            //Debug.WriteLine($"UID {this.GetUID()} took {damageAmount} damage, new HP: {this.Health}");
 
             if (this.Health <= 0f)
             {
                 this.Health = 0f;
-                this.Remove(); // Llama al método Remove() de la clase base Entity.
+                IsDeath = true;
             }
         }
 
@@ -109,12 +111,16 @@ namespace TopiLabo15_PVZ.Classes.Bases
             // this.ZVelocity = (4.0f * peakHeight) / airDuration;
         }
 
+        public override void PreUpdateCallback(float dt)
+        {
+            if (this.IsDeath) { this.Remove(); }
+        }
         public void SimpleJump(float initialVelocityZ, float gravity)
         {
             // Moverlo un poqutio arriba, para que cuando se use con IsOnGround no se quede atascado en el suelo, o algo asi :p
             if (this.IsOnGround()) { this.SetZ(EPSILON); }
             this.ZVelocity = initialVelocityZ; // Asegura que sea positivo.
-            this.Gravity = gravity;
+            this.Gravity = -gravity;
         }
         public override void ApplyPhysics(float dt) // Maneja la posición Z (altura sobre el tablero, se podria utilizar para zombies que hagan saltos).
         {
@@ -131,6 +137,11 @@ namespace TopiLabo15_PVZ.Classes.Bases
             if (this.Hitbox.LaneHash == null) { return; }
 
             this.Hitbox.LaneHash = (int?)this.GetPositionToBoard().Y;
+        }
+
+        public override void PreSpriteCallback(SpriteBatch spriteBatch)
+        {
+            Sprite.LayerDepth = (Position.X + Position.Y) * 0.00001f;
         }
         public override void DrawSpriteCallback(SpriteBatch spriteBatch)
         {

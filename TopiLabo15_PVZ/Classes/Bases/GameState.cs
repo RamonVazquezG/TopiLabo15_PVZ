@@ -21,7 +21,7 @@ public abstract class GameState
     // --- Constructor (Equivale a Gamestate:new) ---
     public GameState()
     {
-        EntityManager = new EntityManager();
+        EntityManager = new EntityManager(this);
         StopTheseWhenSwitchToThese = new Dictionary<GameState, List<GameState>>();
     }
 

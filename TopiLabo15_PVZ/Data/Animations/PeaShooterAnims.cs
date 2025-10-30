@@ -30,15 +30,15 @@ namespace TopiLabo15_PVZ.Data.Animations
 
             var peaShootShootAnim = new Animation(1, 23, 32);
             peaShootShootAnim.AddFrame(0, new Frame(0.08f));
-            peaShootShootAnim.AddFrame(0, new Frame(0.16f));
-            peaShootShootAnim.AddFrame(0, new Frame(0.32f));
-            peaShootShootAnim.AddFrame(0, new Frame(0.05f));
-            peaShootShootAnim.AddFrame(0, new Frame(0.100f));
-            peaShootShootAnim.AddFrame(0, new Frame(0.1f));
+            peaShootShootAnim.AddFrame(1, new Frame(0.16f));
+            peaShootShootAnim.AddFrame(2, new Frame(0.32f));
+            peaShootShootAnim.AddFrame(3, new Frame(0.05f)); // Frame donde se dispara el guisante !!
+            peaShootShootAnim.AddFrame(4, new Frame(0.100f));
+            peaShootShootAnim.AddFrame(5, new Frame(Globals.HUGE)); // Este frame se queda hasta que se cambie la animación o se reinicie.
 
             var peaShootProjectileAnim = new Animation(2, 24, 24);
-            peaShootProjectileAnim.AddFrame(0, new Frame(0.1f));
-            peaShootProjectileAnim.AddFrame(0, new Frame(0.1f));
+            peaShootProjectileAnim.AddFrame(0, new Frame(Globals.FRAME));
+            peaShootProjectileAnim.AddFrame(1, new Frame(Globals.FRAME));
 
             // 4. Añadir animaciones al grupo
             peaShooterGrup.AddAnimation("idle", peaShootIdleAnim);

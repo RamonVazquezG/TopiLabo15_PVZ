@@ -8,6 +8,7 @@
         PlantHazard,
         ZombieHazard,
         Pickup,
-        UI
+        UI,
+        Mouse
     }
 }

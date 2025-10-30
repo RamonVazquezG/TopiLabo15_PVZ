@@ -126,6 +126,11 @@ public class SpriteAnimator
         }
     }
 
+    public bool IsPlaying(string animName)
+    {
+        return currentAnimationKey.Equals(animName);
+    }
+
     // --- Equivalente a Sprite:setFrame ---
     public void SetFrame(int index)
     {

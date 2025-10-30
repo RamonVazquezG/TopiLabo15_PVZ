@@ -1,4 +1,4 @@
-﻿// --- EntityManager.cs ---
+﻿    // --- EntityManager.cs ---
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,6 +7,7 @@ using System.Linq; // Necesario para .ToList()
 
 public class EntityManager
 {
+    public GameState GameState { get; private set; }
     // Equivale a 'self.list' (una tabla UID -> Entidad)
     private Dictionary<int, Entity> entities;
 
@@ -20,12 +21,13 @@ public class EntityManager
     // (No necesitamos 'iDidSpawn' debido a cómo manejamos la lista 'spawnedThisFrame')
 
     // --- Constructor (Equivale a EntityManager:new) ---
-    public EntityManager()
+    public EntityManager(GameState gameState)
     {
         entities = new Dictionary<int, Entity>();
         spawnedThisFrame = new List<Entity>();
         removedThisFrame = new List<int>();
         nextUID = 0;
+        GameState = gameState;
     }
 
     // Equivale a 'pollNextUID' (asumiendo incremento simple)
@@ -107,13 +109,13 @@ public class EntityManager
             }
 
             // 3. Ejecutar lógica (equivale a 'updateSingleEntityLogic(dt, entity)')
-            entity.PreUpdateCallback(dt);
-            entity.GenericUpdate(dt);
-            entity.PostUpdateCallback(dt);
+            if (!entity.IsRemoved) { entity.PreUpdateCallback(dt); }
+            if (!entity.IsRemoved) { entity.GenericUpdate(dt); }
+            if (!entity.IsRemoved) { entity.PostUpdateCallback(dt); }
 
-            entity.PrePhysicsCallback(dt);
-            entity.ApplyPhysics(dt);
-            entity.PostPhysicsCallback(dt);
+            if (!entity.IsRemoved) { entity.PrePhysicsCallback(dt); }
+            if (!entity.IsRemoved) { entity.ApplyPhysics(dt); }
+            if (!entity.IsRemoved) { entity.PostPhysicsCallback(dt); }
         }
 
         // --- Limpieza Post-Actualización ---
@@ -143,10 +145,16 @@ public class EntityManager
         foreach (var pair in entities)
         {
             Entity entity = pair.Value;
-            if (entity.Hitbox != null)
+
+            if (entity.IsRemoved || entity.IsInited) { return; }
+
+            // Soporta múltiples hitboxes por entidad
+            if (entity.Hitboxes == null || entity.Hitboxes.Count == 0)
+                continue;
+
+            foreach (var hb in entity.Hitboxes)
             {
-                //Debug.WriteLine("Checking hitbox for entity UID: " + entity.GetUID());
-                entity.Hitbox.CheckHitboxHash(entities);
+                hb?.CheckHitboxHash(entities);
             }
         }
     }

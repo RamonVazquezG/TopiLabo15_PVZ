@@ -15,8 +15,8 @@ public class Game1 : Game
 
     // Instancias de tus estados de juego
     // (Asumiendo que has creado estas clases que heredan de GameState)
-    private GameState _mainMenuState;
-    private GameState _playingState;
+    //private GameState _mainMenuState;
+    public GameState _playingState;
 
     public float GameTime = 0f;
     public Game1()
@@ -31,8 +31,8 @@ public class Game1 : Game
         Debug.WriteLine("aaaaaaa");
 
         // Crea las instancias de los estados
-        //_mainMenuState = new MainMenuState(); // Asumiendo que esta clase existe
-        _playingState = new PlayingGameState(); // Asumiendo que esta clase existe
+        //_mainMenuState = new MainMenuState(); 
+        _playingState = new PlayingGameState(); 
 
         // Registra los estados en el GameManager
         //GameManager.RegisterNewGameState(_mainMenuState);
@@ -68,7 +68,7 @@ public class Game1 : Game
         // 2. Actualiza el input antes que el juego en si.
         // Esto "prepara" todas las propiedades (IsPressed, IsHeld) para este frame.
         MouseInput.Update();
-
+ 
 
         // 3. Actualiza tu GameManager (el juego en si).
         // Ahora, cualquier estado de juego o entidad que se actualice puede checar de forma segura las propiedades de MouseInput.
@@ -86,7 +86,7 @@ public class Game1 : Game
 
         // 2. Dibujar TODO tu juego (con SpriteBatch)
         // Usa PointClamp aquí también para sprites individuales si quieres
-        _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        _spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.AlphaBlend, SamplerState.PointClamp);
 
         GameManager.Draw(_spriteBatch); // Dibuja entidades
 

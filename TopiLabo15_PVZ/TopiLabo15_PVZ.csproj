@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\Heredates\" />
-    <Folder Include="Data\PickUps\" />
     <Folder Include="Data\UI\" />
   </ItemGroup>
 </Project>
