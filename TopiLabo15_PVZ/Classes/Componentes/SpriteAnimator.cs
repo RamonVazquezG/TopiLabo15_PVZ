@@ -18,18 +18,17 @@ public class SpriteAnimator
     private float frameTimer;
 
     // --- Propiedades de Transformación ---
-    // Origen/pivote manual (equivale a self.ox, self.oy)
+    // Origen/pivote manual
     public Vector2 Offset { get; set; }
 
-    // Multiplicador de tiempo (equivale a dtMulti)
+    // Multiplicador de tiempo dt
     public float SpeedMultiplier { get; set; }
 
     public float LayerDepth { get; set; }
 
-    // Escala (equivale a sx, sy)
     public Vector2 Scale { get; set; }
 
-    // Rotación en radianes (equivale a angle)
+    // Rotación en radianes 
     public float Angle { get; set; }
 
     // --- Referencias de Animación ---
@@ -39,7 +38,6 @@ public class SpriteAnimator
     private AnimationGroup currentGroup;
     private Animation currentAnimation;
 
-    // --- Constructor (Equivale a Sprite:new) ---
     public SpriteAnimator(string group, string animation = "default",
                           bool floorXY = true, float angle = 0f,
                           float sx = 1f, float sy = 1f,

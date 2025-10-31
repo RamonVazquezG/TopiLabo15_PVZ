@@ -21,11 +21,11 @@ namespace TopiLabo15_PVZ.Data.Animations
 
             // 3. Crear animaciónes.
             var goodAnim = new Animation(0, 24, 32);
-            goodAnim.AddFrame(0, new Frame(10f));
+            goodAnim.AddFrame(0, new Frame(7.5f));
             goodAnim.AddFrame(1, new Frame(0.1f));
 
             var mediumAnim = new Animation(1, 24, 32);
-            mediumAnim.AddFrame(0, new Frame(10f));
+            mediumAnim.AddFrame(0, new Frame(5f));
             mediumAnim.AddFrame(1, new Frame(0.1f));
 
             var badAnim = new Animation(2, 24, 32);

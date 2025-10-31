@@ -22,7 +22,7 @@ namespace TopiLabo15_PVZ.Data.Plants
             base.InitCallback();
             Sprite = new SpriteAnimator("peaShooter", "projectile");
 
-            Hitbox hitbox = new Hitbox(this, (int?)this.GetPositionToBoard().Y, new Vector2(11f,11f), new Vector2());
+            Hitbox hitbox = new Hitbox(this, (int?)this.GetPositionToBoard().Y, new Vector2(1f,11f));
             AddHitbox(hitbox);
         }
 

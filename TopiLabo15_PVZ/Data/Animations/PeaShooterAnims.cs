@@ -21,12 +21,12 @@ namespace TopiLabo15_PVZ.Data.Animations
 
             // 3. Crear animaciónes.
             var peaShootIdleAnim = new Animation(0, 23, 32);
-            peaShootIdleAnim.AddFrame(0, new Frame(0.1f));
-            peaShootIdleAnim.AddFrame(1, new Frame(0.2f));
-            peaShootIdleAnim.AddFrame(2, new Frame(0.3f));
-            peaShootIdleAnim.AddFrame(3, new Frame(0.1f));
-            peaShootIdleAnim.AddFrame(4, new Frame(0.2f));
-            peaShootIdleAnim.AddFrame(5, new Frame(0.3f));
+            peaShootIdleAnim.AddFrame(0, new Frame(0.15f));
+            peaShootIdleAnim.AddFrame(1, new Frame(0.25f));
+            peaShootIdleAnim.AddFrame(2, new Frame(0.35f));
+            peaShootIdleAnim.AddFrame(3, new Frame(0.15f));
+            peaShootIdleAnim.AddFrame(4, new Frame(0.25f));
+            peaShootIdleAnim.AddFrame(5, new Frame(0.35f));
 
             var peaShootShootAnim = new Animation(1, 23, 32);
             peaShootShootAnim.AddFrame(0, new Frame(0.08f));

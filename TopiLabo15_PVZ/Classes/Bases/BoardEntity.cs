@@ -141,7 +141,7 @@ namespace TopiLabo15_PVZ.Classes.Bases
 
         public override void PreSpriteCallback(SpriteBatch spriteBatch)
         {
-            Sprite.LayerDepth = (Position.X + Position.Y) * 0.00001f;
+            Sprite.LayerDepth = (Position.Y + Position.X*0.001f) * 0.001f;
         }
         public override void DrawSpriteCallback(SpriteBatch spriteBatch)
         {

@@ -43,6 +43,7 @@ namespace TopiLabo15_PVZ.Data.Others
 
             Sprite = new SpriteAnimator("sunPickup", "default");
             ShineSprite = new SpriteAnimator("sunPickup", "shine");
+            ShineSprite.Angle = Random.Shared.NextSingle() * MathF.PI;
 
             this.Hitbox = new Hitbox(this, null, new Vector2(31f, 31f));
 
@@ -52,7 +53,7 @@ namespace TopiLabo15_PVZ.Data.Others
         {
             Bounce = true;
             SetZ(Globals.TILE_SIZE / 2);
-            SimpleJump(90f, 400f);
+            SimpleJump(111f, 400f);
             Velocity.X = Random.Shared.NextSingle() * Globals.TILE_SIZE;
             Velocity.Rotate(Random.Shared.NextSingle() * MathF.PI * 2f);
         }
@@ -69,10 +70,11 @@ namespace TopiLabo15_PVZ.Data.Others
 
                 ShineSprite.Visible = !ShineSprite.Visible; //Para generar un efecto de transparencia retro. JC: Me gustan este tipo de efectos epilepticos jiji.
                 ShineSprite.Update(dt); //Como solo Sprite se actualiza en GenericUpdate(), necesitamos actualizar ShineSprite manualmente.
-        
+                ShineSprite.Angle += dt*0.321f; //Haciendo que el sprite de brillo rote lentamente.
+
                 if (TimeCount >= LIFE_TIME - 5f)
                 {
-                    Sprite.Visible = FrameCount % 2 == 0; //Aplicando el mismo efecto de "transparencia" pero solo cuando esta a 5 segundos de desaparecer.
+                    Sprite.Visible = !ShineSprite.Visible; //Aplicando el mismo efecto de "transparencia" pero solo cuando esta a 5 segundos de desaparecer.
                     if (TimeCount >= LIFE_TIME) { Remove(); }
                 }
             }
@@ -85,7 +87,7 @@ namespace TopiLabo15_PVZ.Data.Others
 
                 float CORNER = Globals.TILE_SIZE / 2;
                 Position.X = Globals.ExpDec(Position.X, CORNER, 16, dt);
-                Position.Y = Globals.ExpDec(Position.Y, CORNER, 11, dt);
+                Position.Y = Globals.ExpDec(Position.Y, CORNER+3f, 11, dt);
 
                 SetZ( Globals.ExpDec(GetZ(), 0f, 13, dt) );
                 ZVelocity = 0f;
@@ -117,13 +119,19 @@ namespace TopiLabo15_PVZ.Data.Others
         public override void PreSpriteCallback(SpriteBatch spriteBatch)
         {
             base.PreSpriteCallback(spriteBatch);
-            this.Sprite.LayerDepth += 0.3f; // Asegura que los soles se dibujen sobre los zombies y plantas
-            this.ShineSprite.LayerDepth = this.Sprite.LayerDepth - 0.05f; // Asegura que los soles se dibujen sobre los zombies y plantas
+            //this.Sprite.LayerDepth += 0.3f; // Asegura que los soles se dibujen sobre los zombies y plantas
+            this.ShineSprite.LayerDepth = Globals.EPSILON; // Asegura que los soles se dibujen sobre los zombies y plantas
+
+            float scale = Globals.Lerp(1f, 0f, (GetZ()/2f) / Globals.TILE_SIZE);
+            var shineScale = this.ShineSprite.Scale; // No se porque tengo que hacer esto para cambiar el scale pero bueno...
+            shineScale.X = scale;
+            shineScale.Y = scale;
+            this.ShineSprite.Scale = shineScale;
         }
         public override void DrawSpriteCallback(SpriteBatch spriteBatch)
         {
             Vector2 PositionWithZ = new Vector2(Position.X, Position.Y - GetZ());
-            ShineSprite.Draw(spriteBatch, PositionWithZ);
+            ShineSprite.Draw(spriteBatch, Position);
             Sprite.Draw(spriteBatch, PositionWithZ);
         }
     }

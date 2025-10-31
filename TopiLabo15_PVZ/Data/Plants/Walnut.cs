@@ -23,7 +23,10 @@ namespace TopiLabo15_PVZ.Data.Plants
 
         public override void UpdateCallback(float dt)
         {
-            Sprite.SpeedMultiplier = 0.5f + Random.Shared.NextSingle();
+            if (Sprite.JustFinishedAnimation)
+            {
+                Sprite.SpeedMultiplier = 0.5f + Random.Shared.NextSingle() * 5f;
+            }
 
             if ( Health <= WALLNUT_HEALTH * 0.1f)
             {

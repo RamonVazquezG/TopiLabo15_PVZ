@@ -20,7 +20,7 @@ namespace TopiLabo15_PVZ.Data.Animations
             var grup = new AnimationGroup(tex, 31, 31);
 
             // 3. Crear animaciónes.
-            var defaultAnim = new Animation(0, 15, 15);
+            var defaultAnim = new Animation(0, 15, 18);
             defaultAnim.AddFrame(0, new Frame(0.2f));
             defaultAnim.AddFrame(1, new Frame(0.2f));
             defaultAnim.AddFrame(2, new Frame(0.2f));

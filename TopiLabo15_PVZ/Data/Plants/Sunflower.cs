@@ -17,7 +17,7 @@ namespace TopiLabo15_PVZ.Data.Plants
         public Sunflower(EntityManager manager, int boardX, int boardY)
             : base(manager, (int?)PlantSubtypes.SunFlower, boardX, boardY)
         {
-            _sunTimer = SUN_PRODUCTION_TIME - (Random.Shared.NextSingle() * 3f + 3f); // Generar un sol de 3 a 6 segundos random restantes para que halla variedad.
+            _sunTimer = SUN_PRODUCTION_TIME/2 - (Random.Shared.NextSingle() * 3f); // Generar con mas anticipacion el primer sol y con algo de aleatoriedad.
         }
 
         public override void InitCallback()
@@ -33,7 +33,7 @@ namespace TopiLabo15_PVZ.Data.Plants
             {
                 _sunTimer = Random.Shared.NextSingle() * -2f; ; // Delay random de hasta un segundo, para que sea un poco mas impredecible la generacion de soles, o algo asi :p
                 Sprite.Play("sunGive", true);
-                Debug.WriteLine("sun give at 0f");
+                //Debug.WriteLine("sun give");
             }
 
             if ( Sprite.IsPlaying("sunGive") )

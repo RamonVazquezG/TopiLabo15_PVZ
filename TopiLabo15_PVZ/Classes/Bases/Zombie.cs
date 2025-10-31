@@ -90,11 +90,5 @@ namespace TopiLabo15_PVZ.Classes.Entities
                 }
             }
         }
-
-        public override void PreSpriteCallback(SpriteBatch spriteBatch)
-        {
-            base.PreSpriteCallback(spriteBatch);
-            this.Sprite.LayerDepth += 0.1f; // Asegura que los zombies se dibujen sobre las plantas
-        }
     }
 }
