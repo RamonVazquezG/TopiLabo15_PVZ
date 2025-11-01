@@ -35,5 +35,6 @@ public static class AnimationData
         new WalnutAnims(content);
         new SunPickupAnims(content);
         new SunFlowerAnims(content);
+        new UIAnims(content);
     }
 }

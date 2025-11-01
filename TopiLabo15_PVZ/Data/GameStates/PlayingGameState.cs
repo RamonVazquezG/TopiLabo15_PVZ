@@ -27,7 +27,9 @@ namespace TopiLabo15_PVZ.Data.GameStates
         private float WaveTimeProgress = 0f; 
         private float WaveDuration = 60f;
 
-        SpriteAnimator patio; //Nunca inicialicen objetos aquí. Haganlo en OnInit.
+        SpriteAnimator BGPatio; //Nunca inicialicen sprites aquí. Haganlo en OnInit.
+        SpriteAnimator UIWaveBar; 
+        SpriteAnimator UISun;
 
         Mouse mouseEntity;
         public PlayingGameState() : base()
@@ -51,8 +53,9 @@ namespace TopiLabo15_PVZ.Data.GameStates
         {
             Console.WriteLine("PlayingGameState init");
 
-            patio = new SpriteAnimator("patio", "default");
-            //patio.LayerDepth = -0.1f;
+            BGPatio = new SpriteAnimator("patio", "default");
+            UIWaveBar = new SpriteAnimator("uiWaveBar", "waveBarBox");
+            UISun = new SpriteAnimator("uiSun", "default");
 
             this.mouseEntity = new Mouse(this.EntityManager);
 
@@ -122,6 +125,8 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         public override void PreUpdateCallback(float dt)
         {
+            UISun.Update(dt);
+
             // Generar soles automáticamente cada 10 segundos
             SunGenerationTimer += dt;
             if (SunGenerationTimer >= 10f)
@@ -157,7 +162,25 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         public override void PreDrawCallback(SpriteBatch spriteBatch)
         {
-            patio.Draw(spriteBatch, Vector2.Zero);
+            BGPatio.Draw(spriteBatch, Vector2.Zero);
+        }
+
+        public override void PostDrawCallback(SpriteBatch spriteBatch)
+        {
+            //Dibujar la barra de ola
+            UIWaveBar.Play("waveBarBox");
+            UIWaveBar.Scale = Vector2.One;
+            UIWaveBar.Draw(spriteBatch, new Vector2(172f, 176f));
+
+            UIWaveBar.Play("waveBarFiller");
+            var scale = Vector2.One;
+            scale.X = Math.Max(0f, Math.Min(1f, WaveTimeProgress / WaveDuration));
+            //Debug.WriteLine(scale.X);
+            UIWaveBar.Scale = scale;
+            UIWaveBar.Draw(spriteBatch, new Vector2(172f, 176f));
+
+            //Dibujar el solesito de la esquina
+            UISun.Draw(spriteBatch, new Vector2(11f, 11f) );
         }
     }
 }
