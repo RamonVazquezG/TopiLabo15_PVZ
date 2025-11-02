@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿// En tu clase Game1.cs
+
+// ...
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
@@ -8,9 +12,6 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-
-    // ¡NUEVO! Campo para la fuente
-    public SpriteFont _pixelFont;
 
     // Instancias de tus estados de juego
     // (Asumiendo que has creado estas clases que heredan de GameState)
@@ -23,9 +24,6 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-
-        // ¡NUEVO! Asigna la instancia del juego al GameManager
-        GameManager.GameInstance = this;
     }
 
     protected override void Initialize()
@@ -34,7 +32,7 @@ public class Game1 : Game
 
         // Crea las instancias de los estados
         //_mainMenuState = new MainMenuState(); 
-        _playingState = new PlayingGameState();
+        _playingState = new PlayingGameState(); 
 
         // Registra los estados en el GameManager
         //GameManager.RegisterNewGameState(_mainMenuState);
@@ -51,19 +49,6 @@ public class Game1 : Game
 
         // Carga las animaciones (¡importante!)
         AnimationData.LoadContent(Content);
-
-        // ¡NUEVO! Carga de la fuente. 
-        // Nota: Asegúrate de que tengas un archivo de fuente compilado llamado "PixelFont" en tu Content.
-        try
-        {
-            _pixelFont = Content.Load<SpriteFont>("PixelFont");
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Error al cargar la fuente: {ex.Message}. Asegúrate de que 'PixelFont' esté en Content.");
-            // Opcional: Cargar una fuente predeterminada si falla
-            // _pixelFont = new SpriteFont(...);
-        }
 
         Debug.WriteLine("PAPUUUUU");
 

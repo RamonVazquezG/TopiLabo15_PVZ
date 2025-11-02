@@ -35,9 +35,6 @@ namespace TopiLabo15_PVZ.Data.GameStates
         SpriteAnimator UIWaveBar;
         SpriteAnimator UISun;
 
-        // ¡NUEVO! Referencia a la fuente
-        private SpriteFont _pixelFont;
-
         // INICIO: CAMPOS DE PLANTADO/DESPLANTADO
         public Mouse MouseEntity { get; private set; } // Referencia al mouse para interacción
         public PlantSubtypes? SelectedPlantType { get; set; } = null; // Planta seleccionada
@@ -81,11 +78,8 @@ namespace TopiLabo15_PVZ.Data.GameStates
         {
             Console.WriteLine("PlayingGameState init");
 
-            // --- ¡CORRECCIÓN! Usando GameManager.GameInstance para cargar fuente ---
-            if (GameManager.GameInstance is Game1 game1)
-            {
-                this._pixelFont = game1._pixelFont;
-            }
+            // Carga tu fuente aquí si es necesario (ej: myFont = content.Load<SpriteFont>("MiFuente"))
+            // Pero como esta clase no tiene acceso a ContentManager, la carga debe ser en Game1.cs
 
             BGPatio = new SpriteAnimator("patio", "default");
             UIWaveBar = new SpriteAnimator("uiWaveBar", "waveBarBox");
@@ -100,15 +94,16 @@ namespace TopiLabo15_PVZ.Data.GameStates
             int numSeedPackets = 5; // Hay 5 paquetes en el mockup
 
             // Paquetes de Semillas
-            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.PeaShooter, new Vector2(startX + 0 * packetSpacing, offsetY), this._pixelFont));
-            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.SunFlower, new Vector2(startX + 1 * packetSpacing, offsetY), this._pixelFont));
-            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.WallNut, new Vector2(startX + 2 * packetSpacing, offsetY), this._pixelFont));
+            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.PeaShooter, new Vector2(startX + 0 * packetSpacing, offsetY)));
+            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.SunFlower, new Vector2(startX + 1 * packetSpacing, offsetY)));
+            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.WallNut, new Vector2(startX + 2 * packetSpacing, offsetY)));
             // Se asume que el cuarto y el quinto paquete son los siguientes subtipos en el enum o placeholders
             // Para el cálculo de posición, solo nos importa el número y el espaciado
 
             // Calculando la posición de la pala:
-            // Coordenadas exactas: x=158, y=12 (Corregido por el usuario)
+            // 1. Centro X anterior: 167f. Se ajusta 11 píxeles a la izquierda: 167f - 11f = 156f.
             float shovelX = 158f;
+            // 2. Centro Y anterior: 21f (centro del paquete de semillas). Se ajusta a 11f (centro del ícono del sol).
             float shovelY = 12f;
 
             this.ShovelEntity = new ShovelUI(this.EntityManager, this, new Vector2(shovelX, shovelY));
@@ -371,21 +366,6 @@ namespace TopiLabo15_PVZ.Data.GameStates
             Vector2 sunIconPosition = new Vector2(11f, 11f);
             UISun.Draw(spriteBatch, sunIconPosition);
 
-            // --- ¡NUEVO! Dibuja el contador de Soles ---
-            if (_pixelFont != null)
-            {
-                string sunText = SunCount.ToString();
-                Vector2 textSize = _pixelFont.MeasureString(sunText);
-
-                // Posición (23f, 21f) para centrarlo debajo del sol.
-                // Posición X: 11f (centro sol) + 12f (offset)
-                // Posición Y: 21f (debajo del sol)
-                Vector2 textPosition = new Vector2(23f - textSize.X / 2, 31f);
-
-                spriteBatch.DrawString(_pixelFont, sunText, textPosition, Color.White);
-            }
-            // FIN: Dibuja el contador de Soles
-
             // INICIO: LÓGICA DE CONTADOR DE SOL EN HOVER
             float sunIconWidth = 20f; // Área de hover
             float sunIconHeight = 20f;
@@ -396,7 +376,10 @@ namespace TopiLabo15_PVZ.Data.GameStates
             if (mousePos.X >= sunIconPosition.X && mousePos.X < sunIconPosition.X + sunIconWidth &&
                 mousePos.Y >= sunIconPosition.Y && mousePos.Y < sunIconPosition.Y + sunIconHeight)
             {
-                // La lógica de dibujo de texto ya está fuera del hover
+                // 🚨 Para mostrar el contador de Sol, necesitarás cargar una SpriteFont en Game1.LoadContent()
+                // Una vez cargada, puedes dibujarla aquí.
+                // Ejemplo (asumiendo que tienes una SpriteFont llamada myFont):
+                // spriteBatch.DrawString(myFont, SunCount.ToString(), new Vector2(35f, 11f), Color.Black);
             }
             // FIN: LÓGICA DE CONTADOR DE SOL EN HOVER
 
