@@ -8,6 +8,7 @@ using TopiLabo15_PVZ.Classes.Entities;
 using TopiLabo15_PVZ.Data.Others;
 using TopiLabo15_PVZ.Data.Plants;
 using TopiLabo15_PVZ.Data.Zombies;
+using TopiLabo15_PVZ.Data.UI;
 
 
 namespace TopiLabo15_PVZ.Data.GameStates
@@ -16,19 +17,19 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
     {
         // 🚨 CORRECCIÓN CS0122: Hacemos SunCount público (get) para SeedPacketUI
-        public int SunCount { get; private set; } = 0;
+        public int SunCount { get; private set; } = 100;
         private float SunGenerationTimer = 0f;
 
         private int WaveCounter = 1;
 
         private int NextZombieLane = Random.Shared.Next(0, 5);
         private float ZombieGenerationTimer = 0f;
-        private Vector2 ZombieRate = new Vector2(12f, 6f);
+        private Vector2 ZombieRate = new Vector2(45f, 15f);
         private float NextZombieRate;
         private bool IsOnFinalWave = false;
 
         private float WaveTimeProgress = 0f;
-        private float WaveDuration = 60f;
+        private float WaveDuration = 1f; // La duracion se define constantemente en PreUpdateCallback().
 
         SpriteAnimator BGPatio; //Nunca inicialicen sprites aquí. Haganlo en OnInit.
         SpriteAnimator UIWaveBar;
@@ -65,7 +66,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         private float GetNextZombieRate()
         {
-            float divide = 1f + WaveCounter * 0.1f; //Aumenta la dificultad con cada ola, aumentando la velocidad de aparición de los zombies por un 10% por ola.
+            float divide = MathF.Pow(WaveCounter, 1.75f); //Aumenta la dificultad con cada ola, aumentando la velocidad de aparición de los zombies por un 3% por ola.
             return Globals.Lerp(ZombieRate.X, ZombieRate.Y, WaveTimeProgress / WaveDuration) / divide;
         }
 
@@ -84,9 +85,9 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
             // INICIO: Inicializar paquetes de semillas
             // Usamos la posición de la esquina superior izquierda de cada slot (aprox. X=50, Y=1)
-            float startX = 50f;
-            float offsetY = 1f;
-            float packetSpacing = 20f;
+            float startX = 38f;
+            float offsetY = 12f;
+            float packetSpacing = 24f;
 
             // 🚨 CORRECCIÓN VISUAL: Coordenadas de la esquina superior izquierda del slot.
             // SeedPacketUI.Draw() ahora se encargará de añadir el offset de 9x9.
@@ -95,7 +96,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
             seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.WallNut, new Vector2(startX + 2 * packetSpacing, offsetY)));
 
             // Establecer sol inicial
-            this.SunCount = 100;
+            //this.SunCount = 100;
             // FIN: Inicializar paquetes de semillas
         }
 
@@ -115,8 +116,8 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         public void DoFinalWave()
         {
-            float zombiesToSpawn = WaveCounter * 5;
-            float tileOffset = 1.5f + WaveCounter * 0.5f;
+            float zombiesToSpawn = 5 + (WaveCounter * WaveCounter) * 2f;
+            float tileOffset = WaveCounter * WaveCounter * 0.125f;
 
             Debug.WriteLine($"Final Wave! Spawning {zombiesToSpawn} zombies.");
             for (float i = 0; i < zombiesToSpawn; i++)
@@ -254,7 +255,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
                 SunPickup sun = new SunPickup(this, this.EntityManager, Random.Shared.Next(0, 9), Random.Shared.Next(0, 5));
             }
 
-            WaveDuration = 60f + WaveCounter * 15f; //Cada ola dura 15 segundos más que la anterior
+            WaveDuration = 70f + WaveCounter * 5f; //Cada ola dura 5 segundos más que la anterior
             WaveTimeProgress += dt;
             ZombieGenerationTimer += dt;
 
@@ -277,6 +278,8 @@ namespace TopiLabo15_PVZ.Data.GameStates
             {
                 TryEndFinalWave();
             }
+
+            CheckForZombieWinCondition();
         }
 
         public override void PreDrawCallback(SpriteBatch spriteBatch)
@@ -332,24 +335,37 @@ namespace TopiLabo15_PVZ.Data.GameStates
                     switch (SelectedPlantType)
                     {
                         case PlantSubtypes.PeaShooter:
-                            drawSprite = new SpriteAnimator("peaShooter", "idle", layerDepth: 0.9f);
+                            drawSprite = new SpriteAnimator("peaShooter", "idle");
                             break;
                         case PlantSubtypes.SunFlower:
-                            drawSprite = new SpriteAnimator("sunFlower", "idle", layerDepth: 0.9f);
+                            drawSprite = new SpriteAnimator("sunFlower", "idle");
                             break;
                         case PlantSubtypes.WallNut:
-                            drawSprite = new SpriteAnimator("walnut", "good", layerDepth: 0.9f);
+                            drawSprite = new SpriteAnimator("walnut", "good");
                             break;
                     }
 
                     if (drawSprite != null)
                     {
-                        // 🚨 CORRECCIÓN CS1061: Usamos la nueva propiedad CurrentFrameData.Origin
-                        Vector2 origin = drawSprite.CurrentFrameData.Origin;
-                        // Restamos el origen de la posición del mouse para centrar el sprite en el cursor
-                        drawSprite.Draw(spriteBatch, mouseWorldPos - origin);
+                        drawSprite.LayerDepth = 0.9f;
+                        drawSprite.Draw(spriteBatch, mouseWorldPos);
                     }
                 }
+            }
+        }
+
+        private void CheckForZombieWinCondition()
+        {
+            // Usamos LINQ para encontrar si algún zombi ha llegado al final.
+            bool zombieReachedEnd = EntityManager.GetEntities()
+                .Any(e => e.TYPE == EntityTypes.Zombie && e.Position.X < (BoardOffset.X - TileSize));
+
+            if (zombieReachedEnd)
+            {
+                Debug.WriteLine("¡Un zombi ha llegado a tu casa! Fin del juego.");
+                // Aquí puedes añadir la lógica para terminar o reiniciar el juego.
+                // Por ejemplo, para reiniciar, podrías cambiar a un nuevo estado de juego:
+                GameManager.SwitchGameState(new PlayingGameState());
             }
         }
     }

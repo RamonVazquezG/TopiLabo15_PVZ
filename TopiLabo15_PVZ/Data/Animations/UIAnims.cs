@@ -35,15 +35,24 @@ namespace TopiLabo15_PVZ.Data.Animations
 
             // --- UI Seed Packets (uiSeeds) ---
             Texture2D seedsTex = content.Load<Texture2D>("seeds");
-            var seedsGrup = new AnimationGroup(seedsTex, 18, 33);
+            var seedsGrup = new AnimationGroup(seedsTex, 18, 18);
 
             // 3. Crear una ÚNICA animación "default".
-            var defaultSeedsAnim = new Animation((int)PlantSubtypes.PeaShooter, 9, 16.5f); // Row 0, Origen (9, 16.5) - Centro del slot
-            defaultSeedsAnim.AddFrame(0, new Frame(Globals.HUGE)); // Frame 0: Icono OK (Brillante)
-            defaultSeedsAnim.AddFrame(1, new Frame(Globals.HUGE)); // Frame 1: Icono Gris/Recarga
+            var peaShooterPacketAnims = new Animation((int)PlantSubtypes.PeaShooter, 9, 9); // Row 0, Origen (9, 9) - Centro del slot
+            peaShooterPacketAnims.AddFrame(0, new Frame(Globals.HUGE)); // Frame 0: Icono Gris/Recarga
+            peaShooterPacketAnims.AddFrame(1, new Frame(Globals.HUGE)); // Frame 1: Icono OK (Brillante)
 
+            var sunFlowerPacketAnims = new Animation((int)PlantSubtypes.SunFlower, 9, 9); 
+            sunFlowerPacketAnims.AddFrame(0, new Frame(Globals.HUGE)); 
+            sunFlowerPacketAnims.AddFrame(1, new Frame(Globals.HUGE));
+
+            var walnutPacketAnims = new Animation((int)PlantSubtypes.WallNut, 9, 9);
+            walnutPacketAnims.AddFrame(0, new Frame(Globals.HUGE));
+            walnutPacketAnims.AddFrame(1, new Frame(Globals.HUGE));
             // 4. Añadir la animación al grupo.
-            seedsGrup.AddAnimation("default", defaultSeedsAnim);
+            seedsGrup.AddAnimation((int)PlantSubtypes.PeaShooter+"", peaShooterPacketAnims); // Corresponden a los IDs de PlantSubtypes, para que acceder fácilmente a estas animaciones.
+            seedsGrup.AddAnimation((int)PlantSubtypes.SunFlower+"", sunFlowerPacketAnims); // JC: Quiazas no sea intuitivo, pero creo que es mas eficiente.
+            seedsGrup.AddAnimation((int)PlantSubtypes.WallNut+"", walnutPacketAnims);
 
             // 5. Añadir el grupo al diccionario principal.
             AnimationData.Add("uiSeeds", seedsGrup);

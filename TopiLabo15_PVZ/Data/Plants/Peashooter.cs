@@ -40,7 +40,7 @@ namespace TopiLabo15_PVZ.Data.Plants
                 // Solo dispara si hay un zombie en el carril
                 if (this.HasZombieSight)
                 {
-                    _shootTimer = Random.Shared.NextSingle() * -0.1f; //Un pequeño retraso aleatorio para que no todos disparen exactamente al mismo tiempo.
+                    _shootTimer = Random.Shared.NextSingle() * -0.25f; //Un pequeño retraso aleatorio para que no todos disparen exactamente al mismo tiempo.
                     Sprite.Play("shoot", true); // JC: Recuerden que el true hara que se reinicie la animacion desde el frame 0.
                 }
                 else

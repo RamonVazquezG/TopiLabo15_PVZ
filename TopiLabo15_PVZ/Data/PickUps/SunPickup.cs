@@ -122,7 +122,7 @@ namespace TopiLabo15_PVZ.Data.Others
             //this.Sprite.LayerDepth += 0.3f; // Asegura que los soles se dibujen sobre los zombies y plantas
             this.ShineSprite.LayerDepth = Globals.EPSILON; // Asegura que los soles se dibujen sobre los zombies y plantas
 
-            float scale = Globals.Lerp(1f, 0f, (GetZ()/2f) / Globals.TILE_SIZE);
+            float scale = Globals.Lerp(1f, 0f, (GetZ()/3f) / Globals.TILE_SIZE);
             var shineScale = this.ShineSprite.Scale; // No se porque tengo que hacer esto para cambiar el scale pero bueno...
             shineScale.X = scale;
             shineScale.Y = scale;

@@ -28,6 +28,5 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Classes\Heredates\" />
-    <Folder Include="Data\UI\" />
   </ItemGroup>
 </Project>

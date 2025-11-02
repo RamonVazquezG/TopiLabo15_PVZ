@@ -60,20 +60,23 @@ public class Game1 : Game
     {
         // 1. Calcular dt.
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds; //dt es cuanto tiempo ha pasado desde el último frame. Es importante para que el juego corra igual de rápido en computadoras rápidas y lentas.
-        
         dt = MathF.Min(dt, 0.03333333333333333333333333333333f); // Limita dt a un máximo de 30 FPS para evitar problemas en caso de lag severo (Se puede conseguir facilmente agarrando la ventana por mucho tiempo).
 
-        GameTime += dt;
+        int loops = 1;
+        if (Microsoft.Xna.Framework.Input.Keyboard.GetState().IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Tab)) { loops = 5; }
 
-        // 2. Actualiza el input antes que el juego en si.
-        // Esto "prepara" todas las propiedades (IsPressed, IsHeld) para este frame.
-        MouseInput.Update();
- 
+        for (int i = 0; i < loops; i++)
+        {
+            GameTime += dt;
 
-        // 3. Actualiza tu GameManager (el juego en si).
-        // Ahora, cualquier estado de juego o entidad que se actualice puede checar de forma segura las propiedades de MouseInput.
-        GameManager.Update(dt);
+            // 2. Actualiza el input antes que el juego en si.
+            // Esto "prepara" todas las propiedades (IsPressed, IsHeld) para este frame.
+            MouseInput.Update();
 
+            // 3. Actualiza tu GameManager (el juego en si).
+            // Ahora, cualquier estado de juego o entidad que se actualice puede checar de forma segura las propiedades de MouseInput.
+            GameManager.Update(dt);
+        }
         base.Update(gameTime);
     }
 

@@ -8,7 +8,7 @@ using TopiLabo15_PVZ.Classes.Entities;
 using TopiLabo15_PVZ.Data.GameStates;
 using TopiLabo15_PVZ.Data.Plants;
 
-namespace TopiLabo15_PVZ.Data.Others
+namespace TopiLabo15_PVZ.Data.UI
 {
     public class SeedPacketUI : Entity
     {
@@ -32,7 +32,7 @@ namespace TopiLabo15_PVZ.Data.Others
                 case PlantSubtypes.WallNut:
                     return (50, 30.0f);
                 default:
-                    return (9999, 99.0f);
+                    return (9999, 99.0f); //JC: wtf
             }
         }
 
@@ -48,12 +48,10 @@ namespace TopiLabo15_PVZ.Data.Others
             this.RechargeDuration = data.recharge;
             this.RechargeTimer = 0f; // Inicialmente listo
 
-            // 🚨 CORRECCIÓN: Usamos la animación "default" de UIAnims.cs
-            this.Sprite = new SpriteAnimator("uiSeeds", "default");
+            this.Sprite = new SpriteAnimator("uiSeeds", (int?)plantType + ""); //La animacion se llama por el PlantSubtypes como string.
 
-            // Hitbox para la interacción del mouse (18x33)
-            this.Hitbox = new Hitbox(this, null, new Vector2(18f, 33f), Vector2.Zero, "seedPacket");
-            this.Hitbox.Offset = new Vector2(0f, 0f);
+            // Hitbox para la interacción del mouse (18x18)
+            this.Hitbox = new Hitbox(this, null, new Vector2(18f, 18f));
 
             // Re-aplicar posición para asegurar que el Hitbox esté en la coordenada correcta
             this.Position = screenPosition;
@@ -106,17 +104,9 @@ namespace TopiLabo15_PVZ.Data.Others
 
             Sprite.LayerDepth = 0.99f; // Dibujar siempre al frente
 
-            // INICIO: Lógica para forzar el Row y Frame correctos
-            int targetRow = (int)this.PlantType; // Row: 0=Pea, 1=Sun, 2=Walnut
-            int targetFrame = IsReady() ? 0 : 1; // Frame: 0=OK, 1=Recarga (Gris)
-
-            // 🚨 CORRECCIÓN: Forzamos la fila (Row) y el frame.
-            this.Sprite.currentAnimation.Row = targetRow;
+            int targetFrame = IsReady() ? 1 : 0; // Frame: 0=OK, 1=Recarga (Gris)
             this.Sprite.SetFrame(targetFrame);
 
-            // FIN: Lógica para forzar el Row y Frame correctos
-
-            // Dibujamos en this.Position (esquina superior izquierda del slot 18x33)
             this.Sprite.Draw(spriteBatch, this.Position);
 
             // DIBUJADO DE TEXTO (Costo)
