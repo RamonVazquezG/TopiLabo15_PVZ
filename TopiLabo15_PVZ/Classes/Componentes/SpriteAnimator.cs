@@ -54,7 +54,7 @@ public class SpriteAnimator
     private string currentGroupKey;
     private string currentAnimationKey;
 
-    private AnimationGroup currentGroup;
+    public AnimationGroup currentGroup;
     // 🚨 CORRECCIÓN: Hacemos public para permitir la manipulación de Row en SeedPacketUI
     public Animation currentAnimation; 
 

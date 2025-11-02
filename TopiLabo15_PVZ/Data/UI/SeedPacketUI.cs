@@ -20,6 +20,9 @@ namespace TopiLabo15_PVZ.Data.UI
         private PlayingGameState _gameState;
         private Vector2 _screenPosition;
 
+        // ¡NUEVO! Referencia a la fuente
+        private SpriteFont _pixelFont;
+
         // Función estática para obtener la data de la planta (valores fijos).
         public static (int cost, float recharge) GetPlantData(PlantSubtypes plantType)
         {
@@ -36,12 +39,13 @@ namespace TopiLabo15_PVZ.Data.UI
             }
         }
 
-        public SeedPacketUI(EntityManager manager, PlayingGameState gameState, PlantSubtypes plantType, Vector2 screenPosition)
+        public SeedPacketUI(EntityManager manager, PlayingGameState gameState, PlantSubtypes plantType, Vector2 screenPosition, SpriteFont pixelFont)
             : base(manager, EntityTypes.UI, (int?)plantType, screenPosition, Vector2.Zero, null)
         {
             this._gameState = gameState;
             this.PlantType = plantType;
             this._screenPosition = screenPosition;
+            this._pixelFont = pixelFont;
 
             var data = GetPlantData(plantType);
             this.Cost = data.cost;
@@ -109,12 +113,48 @@ namespace TopiLabo15_PVZ.Data.UI
 
             this.Sprite.Draw(spriteBatch, this.Position);
 
-            // DIBUJADO DE TEXTO (Costo)
-            if (this.Hitbox.Intersects(_gameState.MouseEntity.Hitbox))
+            // --- ¡NUEVO! DIBUJADO DE TEXTO (Costo) ---
+            if (_pixelFont != null)
             {
-                // NOTA: Para que esto se vea, necesitas cargar una SpriteFont.
-                // string costText = $"${Cost}";
-                // spriteBatch.DrawString(font, costText, this.Position + new Vector2(18f, 18f), Color.Black);
+                string costText = Cost.ToString();
+                Vector2 textSize = _pixelFont.MeasureString(costText);
+
+                // Posición para el costo: Centrado horizontalmente en la parte inferior del paquete.
+                // Offset horizontal: 9f (mitad del ancho del paquete) - textSize.X / 2f
+                // Offset vertical: 12f (borde inferior)
+                Vector2 textPosition = this.Position + new Vector2(9f - textSize.X / 2f, 12f);
+
+                // Color: Blanco o Amarillo si está listo y con suficiente sol
+                Color textColor = IsReady() ? Color.White : Color.Gray;
+
+                spriteBatch.DrawString(_pixelFont, costText, textPosition, textColor);
+            }
+            // FIN: DIBUJADO DE TEXTO
+
+            // Dibujar capa de recarga (opcional, para visualización de cooldown)
+            if (RechargeTimer > 0f && !IsReady())
+            {
+                float fillRatio = RechargeTimer / RechargeDuration;
+                float fillHeight = 18f * fillRatio;
+
+                // Rectángulo que simula la sombra (oscurece la parte superior del paquete)
+                Rectangle sourceRectangle = new Rectangle(0, 0, 18, (int)fillHeight);
+
+                // La posición se ajusta hacia abajo para que el llenado empiece desde abajo
+                Vector2 drawPosition = this.Position + new Vector2(0f, 18f - fillHeight);
+
+                // El color negro o semitransparente puede simular la recarga
+                spriteBatch.Draw(
+                    this.Sprite.currentGroup.Texture, // La textura completa del paquete
+                    drawPosition,
+                    sourceRectangle,
+                    Color.Black * 0.75f, // Oscurece
+                    0f,
+                    Vector2.Zero,
+                    Vector2.One,
+                    SpriteEffects.None,
+                    0.991f // Dibujar LIGERAMENTE por encima del ícono (0.99f)
+                );
             }
         }
 

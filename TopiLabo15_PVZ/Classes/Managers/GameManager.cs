@@ -8,6 +8,9 @@ using System.Diagnostics; // Para Debug.WriteLine (en lugar de 'print')
 // Equivale a 'Game = {} ... return Game:new()'
 public static class GameManager
 {
+    // ¡NUEVO! Permite que los GameStates accedan a la instancia principal del juego (para cargar fuentes, etc.)
+    public static Game GameInstance { get; set; }
+
     // Equivale a self.currentGamestate
     public static GameState CurrentGameState { get; private set; }
 
