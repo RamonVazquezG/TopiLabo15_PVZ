@@ -13,6 +13,8 @@ namespace TopiLabo15_PVZ.Data.Plants
         public Walnut(EntityManager manager, int boardX, int boardY)
             : base(manager, (int?)PlantSubtypes.WallNut, boardX, boardY, WALLNUT_HEALTH)
         {
+            this.SunCost = 50;         // ⬅️ ¡NUEVO! Costo de Sol.
+            this.RechargeTime = 30.0f; // ⬅️ ¡NUEVO! Tiempo de recarga (largo).
         }
 
         public override void InitCallback()

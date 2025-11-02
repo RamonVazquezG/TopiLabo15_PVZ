@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
+using System.Linq; // NECESARIO para LINQ (Any, FirstOrDefault)
+using System.Collections.Generic; // NECESARIO para List<T>
 using TopiLabo15_PVZ.Classes.Entities;
 using TopiLabo15_PVZ.Data.Others;
 using TopiLabo15_PVZ.Data.Plants;
@@ -13,7 +15,8 @@ namespace TopiLabo15_PVZ.Data.GameStates
     public class PlayingGameState : GameState
 
     {
-        private int SunCount = 0;
+        // 🚨 CORRECCIÓN CS0122: Hacemos SunCount público (get) para SeedPacketUI
+        public int SunCount { get; private set; } = 0;
         private float SunGenerationTimer = 0f;
 
         private int WaveCounter = 1;
@@ -24,17 +27,34 @@ namespace TopiLabo15_PVZ.Data.GameStates
         private float NextZombieRate;
         private bool IsOnFinalWave = false;
 
-        private float WaveTimeProgress = 0f; 
+        private float WaveTimeProgress = 0f;
         private float WaveDuration = 60f;
 
         SpriteAnimator BGPatio; //Nunca inicialicen sprites aquí. Haganlo en OnInit.
-        SpriteAnimator UIWaveBar; 
+        SpriteAnimator UIWaveBar;
         SpriteAnimator UISun;
 
-        Mouse mouseEntity;
+        // INICIO: CAMPOS DE PLANTADO
+        public Mouse MouseEntity { get; private set; } // Referencia al mouse para interacción
+        public PlantSubtypes? SelectedPlantType { get; set; } = null; // Planta seleccionada
+        private List<SeedPacketUI> seedPackets = new List<SeedPacketUI>(); // Lista de paquetes
+
+        // Constantes del tablero
+        private Vector2 BoardOffset;
+        private float TileSize;
+        // FIN: CAMPOS DE PLANTADO
+
+        // NOTA: Se necesita una SpriteFont para dibujar texto en DrawString.
+        // public SpriteFont myFont; 
+
         public PlayingGameState() : base()
         {
             NextZombieRate = ZombieRate.X;
+
+            // INICIO: Inicializar constantes del tablero
+            this.TileSize = Globals.TILE_SIZE;
+            this.BoardOffset = new Vector2(this.TileSize * 1.0f, this.TileSize * 2.0f);
+            // FIN: Inicializar constantes del tablero
         }
 
         private int GetNextZombieLane() //Metodo para obtener la siguiente línea de zombies de forma aleatoria pero sin repetir la misma línea consecutivamente
@@ -53,28 +73,30 @@ namespace TopiLabo15_PVZ.Data.GameStates
         {
             Console.WriteLine("PlayingGameState init");
 
+            // Carga tu fuente aquí si es necesario (ej: myFont = content.Load<SpriteFont>("MiFuente"))
+            // Pero como esta clase no tiene acceso a ContentManager, la carga debe ser en Game1.cs
+
             BGPatio = new SpriteAnimator("patio", "default");
             UIWaveBar = new SpriteAnimator("uiWaveBar", "waveBarBox");
             UISun = new SpriteAnimator("uiSun", "default");
 
-            this.mouseEntity = new Mouse(this.EntityManager);
+            this.MouseEntity = new Mouse(this.EntityManager);
 
-            Peashooter peashooter = new Peashooter(this.EntityManager, 1, 1);
-            Sunflower sunflower = new Sunflower(this.EntityManager, 0, 1);
-            Walnut walnut = new Walnut(this.EntityManager, 8, 3);
-            //NormalZombie zombie = new NormalZombie(this.EntityManager, 1);
+            // INICIO: Inicializar paquetes de semillas
+            // Usamos la posición de la esquina superior izquierda de cada slot (aprox. X=50, Y=1)
+            float startX = 50f;
+            float offsetY = 1f;
+            float packetSpacing = 20f;
 
-            sunflower = new Sunflower(this.EntityManager, 0, 2);
-            peashooter = new Peashooter(this.EntityManager, 1, 2);
-            peashooter = new Peashooter(this.EntityManager, 1, 4);
-            peashooter = new Peashooter(this.EntityManager, 1, 3);
-            peashooter = new Peashooter(this.EntityManager, 1, 0);
-            //zombie = new NormalZombie(this.EntityManager, 2);
-            //zombie = new NormalZombie(this.EntityManager, 3);
+            // 🚨 CORRECCIÓN VISUAL: Coordenadas de la esquina superior izquierda del slot.
+            // SeedPacketUI.Draw() ahora se encargará de añadir el offset de 9x9.
+            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.PeaShooter, new Vector2(startX + 0 * packetSpacing, offsetY)));
+            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.SunFlower, new Vector2(startX + 1 * packetSpacing, offsetY)));
+            seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.WallNut, new Vector2(startX + 2 * packetSpacing, offsetY)));
 
-            //zombie.SetPositionFromBoard(8, zombie.LaneY);
-
-            SunPickup sun = new SunPickup(this, this.EntityManager, 4, 2);
+            // Establecer sol inicial
+            this.SunCount = 100;
+            // FIN: Inicializar paquetes de semillas
         }
 
         public void IncrementSunCount(int amount)
@@ -86,6 +108,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
         private void SpawnZombie(float offsetX = 0)
         {
             int lane = GetNextZombieLane();
+            // 🚨 CORRECCIÓN CS1729: El constructor de NormalZombie solo toma EntityManager y laneY
             NormalZombie zombie = new NormalZombie(this.EntityManager, lane);
             zombie.Position.X += offsetX;
         }
@@ -98,7 +121,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
             Debug.WriteLine($"Final Wave! Spawning {zombiesToSpawn} zombies.");
             for (float i = 0; i < zombiesToSpawn; i++)
             {
-                float offsetX = Globals.Lerp(0f, Globals.TILE_SIZE * tileOffset, i/zombiesToSpawn);
+                float offsetX = Globals.Lerp(0f, Globals.TILE_SIZE * tileOffset, i / zombiesToSpawn);
                 SpawnZombie(offsetX);
             }
 
@@ -111,30 +134,126 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         public void TryEndFinalWave()
         {
-            foreach (Entity entity in this.EntityManager.GetEntities())
+            // Usamos Linq.Any para una comprobación más limpia
+            if (!this.EntityManager.GetEntities().Any(e => e.TYPE == EntityTypes.Zombie))
             {
-                if (entity.TYPE == EntityTypes.Zombie)
-                    return;
+                //Si todavia hay una entidad zombie, no va a llegar a este punto
+                IsOnFinalWave = false;
+                WaveTimeProgress = 0f;
+                ZombieGenerationTimer = 0f;
+            }
+        }
+
+        // INICIO: LÓGICA DE PLANTADO
+        // Método para verificar si una casilla está ocupada
+        public bool IsTileOccupied(int boardX, int boardY)
+        {
+            foreach (var entity in EntityManager.GetEntities())
+            {
+                if (entity.TYPE == EntityTypes.Plant && entity is Plant plant)
+                {
+                    if (plant.BoardX == boardX && plant.BoardY == boardY)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Método auxiliar para intentar colocar la planta
+        private bool TryPlacePlant(PlantSubtypes plantType, int boardX, int boardY)
+        {
+            var packet = seedPackets.FirstOrDefault(p => p.PlantType == plantType);
+            if (packet == null) return false;
+
+            if (IsTileOccupied(boardX, boardY)) return false;
+            if (!packet.IsReady()) return false;
+
+            SunCount -= packet.Cost;
+            packet.StartRecharge();
+
+            switch (plantType)
+            {
+                case PlantSubtypes.PeaShooter:
+                    new Peashooter(this.EntityManager, boardX, boardY);
+                    break;
+                case PlantSubtypes.SunFlower:
+                    new Sunflower(this.EntityManager, boardX, boardY);
+                    break;
+                case PlantSubtypes.WallNut:
+                    new Walnut(this.EntityManager, boardX, boardY);
+                    break;
+                default:
+                    return false;
             }
 
-            //Si todavia hay una entidad zombie, no va a llegar a este punto
-            IsOnFinalWave = false;
-            WaveTimeProgress = 0f;
-            ZombieGenerationTimer = 0f;
+            IncrementSunCount(0); // Llama para actualizar el contador en consola
+
+            return true;
         }
+
+        private void UpdatePlanting()
+        {
+            if (SelectedPlantType != null)
+            {
+                // 1. Calcular coordenadas del tablero a partir de la posición del mouse
+                Vector2 mouseWorldPos = MouseEntity.Position;
+                int boardX = (int)MathF.Floor((mouseWorldPos.X - BoardOffset.X) / TileSize);
+                int boardY = (int)MathF.Floor((mouseWorldPos.Y - BoardOffset.Y) / TileSize);
+
+                // Comprobación de límites (9 columnas x 5 filas: 0-8, 0-4)
+                bool isOverValidTile = boardX >= 0 && boardX <= 8 && boardY >= 0 && boardY <= 4;
+
+                // 2. Manejar la colocación (clic izquierdo)
+                if (MouseInput.LeftButtonPressed)
+                {
+                    if (isOverValidTile)
+                    {
+                        if (TryPlacePlant((PlantSubtypes)SelectedPlantType, boardX, boardY))
+                        {
+                            SelectedPlantType = null;
+                        }
+                    }
+                    else
+                    {
+                        SelectedPlantType = null;
+                    }
+                }
+
+                // 3. Clic derecho siempre deselecciona
+                if (MouseInput.RightButtonPressed)
+                {
+                    SelectedPlantType = null;
+                }
+            }
+
+            // 4. Deseleccionar si el paquete ya no está listo (por falta de sol o recarga)
+            if (SelectedPlantType != null)
+            {
+                var selectedPacket = seedPackets.FirstOrDefault(p => p.PlantType == SelectedPlantType);
+                if (selectedPacket != null && !selectedPacket.IsReady())
+                {
+                    SelectedPlantType = null;
+                }
+            }
+        }
+        // FIN: LÓGICA DE PLANTADO
 
         public override void PreUpdateCallback(float dt)
         {
             UISun.Update(dt);
+            UpdatePlanting(); // Llamar a la lógica de plantado
 
             // Generar soles automáticamente cada 10 segundos
             SunGenerationTimer += dt;
             if (SunGenerationTimer >= 10f)
             {
                 SunGenerationTimer = 0f;
+                // Usamos el constructor de SunPickup que toma PlayingGameState para generar el sol.
                 SunPickup sun = new SunPickup(this, this.EntityManager, Random.Shared.Next(0, 9), Random.Shared.Next(0, 5));
             }
-             
+
             WaveDuration = 60f + WaveCounter * 15f; //Cada ola dura 15 segundos más que la anterior
             WaveTimeProgress += dt;
             ZombieGenerationTimer += dt;
@@ -180,7 +299,58 @@ namespace TopiLabo15_PVZ.Data.GameStates
             UIWaveBar.Draw(spriteBatch, new Vector2(172f, 176f));
 
             //Dibujar el solesito de la esquina
-            UISun.Draw(spriteBatch, new Vector2(11f, 11f) );
+            Vector2 sunIconPosition = new Vector2(11f, 11f);
+            UISun.Draw(spriteBatch, sunIconPosition);
+
+            // INICIO: LÓGICA DE CONTADOR DE SOL EN HOVER
+            float sunIconWidth = 20f; // Área de hover
+            float sunIconHeight = 20f;
+
+            Vector2 mousePos = MouseEntity.Position;
+
+            // Comprueba si el mouse está sobre el área del icono (11, 11) a (31, 31)
+            if (mousePos.X >= sunIconPosition.X && mousePos.X < sunIconPosition.X + sunIconWidth &&
+                mousePos.Y >= sunIconPosition.Y && mousePos.Y < sunIconPosition.Y + sunIconHeight)
+            {
+                // 🚨 Para mostrar el contador de Sol, necesitarás cargar una SpriteFont en Game1.LoadContent()
+                // Una vez cargada, puedes dibujarla aquí.
+                // Ejemplo (asumiendo que tienes una SpriteFont llamada myFont):
+                // spriteBatch.DrawString(myFont, SunCount.ToString(), new Vector2(35f, 11f), Color.Black);
+            }
+            // FIN: LÓGICA DE CONTADOR DE SOL EN HOVER
+
+            // --- Previsualizador de Planta (Follow-Mouse) ---
+            if (SelectedPlantType != null)
+            {
+                Vector2 mouseWorldPos = MouseEntity.Position;
+                var packet = seedPackets.FirstOrDefault(p => p.PlantType == SelectedPlantType);
+
+                // Solo dibujar si tenemos sol suficiente
+                if (packet != null && SunCount >= packet.Cost)
+                {
+                    SpriteAnimator drawSprite = null;
+                    switch (SelectedPlantType)
+                    {
+                        case PlantSubtypes.PeaShooter:
+                            drawSprite = new SpriteAnimator("peaShooter", "idle", layerDepth: 0.9f);
+                            break;
+                        case PlantSubtypes.SunFlower:
+                            drawSprite = new SpriteAnimator("sunFlower", "idle", layerDepth: 0.9f);
+                            break;
+                        case PlantSubtypes.WallNut:
+                            drawSprite = new SpriteAnimator("walnut", "good", layerDepth: 0.9f);
+                            break;
+                    }
+
+                    if (drawSprite != null)
+                    {
+                        // 🚨 CORRECCIÓN CS1061: Usamos la nueva propiedad CurrentFrameData.Origin
+                        Vector2 origin = drawSprite.CurrentFrameData.Origin;
+                        // Restamos el origen de la posición del mouse para centrar el sprite en el cursor
+                        drawSprite.Draw(spriteBatch, mouseWorldPos - origin);
+                    }
+                }
+            }
         }
     }
 }

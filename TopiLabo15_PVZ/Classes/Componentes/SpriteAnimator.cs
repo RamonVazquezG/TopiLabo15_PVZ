@@ -5,6 +5,25 @@ using System; // Para Math.Floor
 // --- Equivalente a la clase 'Sprite' en sprite.lua ---
 public class SpriteAnimator
 {
+    // INICIO: CORRECCIÓN CS1061
+    /// <summary>
+    /// Proporciona acceso a los datos de la animación actual.
+    /// </summary>
+    public (int frameIndex, int row, Vector2 Origin) CurrentFrameData
+    {
+        get
+        {
+            if (currentAnimation == null || !currentAnimation.Frames.ContainsKey(FrameIndex))
+            {
+                // Devolver valores seguros si la animación no se ha cargado/inicializado
+                return (0, 0, Vector2.Zero);
+            }
+            // Devolver la información del frame y el origen de la animación.
+            return (FrameIndex, currentAnimation.Row, currentAnimation.Origin);
+        }
+    }
+    // FIN: CORRECCIÓN CS1061
+
     // --- Campos de Estado ---
     public bool Visible { get; set; }
     public bool FlipX { get; set; }
@@ -36,7 +55,8 @@ public class SpriteAnimator
     private string currentAnimationKey;
 
     private AnimationGroup currentGroup;
-    private Animation currentAnimation;
+    // 🚨 CORRECCIÓN: Hacemos public para permitir la manipulación de Row en SeedPacketUI
+    public Animation currentAnimation; 
 
     public SpriteAnimator(string group, string animation = "default",
                           bool floorXY = true, float angle = 0f,
@@ -207,10 +227,5 @@ public class SpriteAnimator
         );
     }
 
-    // --- Equivalente a Sprite:drawOn (Sobrecarga) ---
-    // Asumiendo que 'entity' tiene una propiedad pública 'Position' de tipo 'Vector2'
-    // public void DrawOn(SpriteBatch spriteBatch, YourEntityClass entity)
-    // {
-    //     Draw(spriteBatch, entity.Position);
-    // }
+    // ... (El resto del código)
 }

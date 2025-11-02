@@ -26,7 +26,7 @@ public class Frame
 public class Animation
 {
     // Fila en el spritesheet (equivale a _row)
-    public int Row { get; private set; }
+    public int Row { get;  set; }
 
     // Origen/Pivote de la animación (equivale a _ox, _oy)
     public Vector2 Origin { get; private set; }

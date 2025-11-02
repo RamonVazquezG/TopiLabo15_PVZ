@@ -1,106 +1,71 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿// staarmaan/topilabo15_pvz/TopiLabo15_PVZ-Juan/TopiLabo15_PVZ/Data/Animations/UIAnims.cs
+
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using TopiLabo15_PVZ;
+using TopiLabo15_PVZ.Data.Plants;
 
 namespace TopiLabo15_PVZ.Data.Animations
 {
     public class UIAnims
     {
-        public UIAnims(ContentManager content) //JC: Puro copy paste alv
+        public UIAnims(ContentManager content)
         {
-            // 1. Cargar la textura
-            // NOTA: MonoGame elimina el tipo de archivo (como el .png) y la ruta 'Content/'.
-            // Ejemplo, "Content/peaShooterAnimTest.png" se vuelve "peaShooterAnimTest"
+            // --- UI Shovel ---
             Texture2D shovelTex = content.Load<Texture2D>("shovel");
-
-            // 2. Crear el grupo.
             var shovelGrup = new AnimationGroup(shovelTex, 22, 22);
-
-            // 3. Crear animaciónes.
             var shovelAnim = new Animation(0, 11, 11);
             shovelAnim.AddFrame(0, new Frame(Globals.HUGE));
-
-            // 4. Añadir animaciones al grupo
             shovelGrup.AddAnimation("default", shovelAnim);
-
-            // 5. Añadir el grupo al diccionario principal. JC: Nunca olviden tambien instanciar esta clase en AnimationData.LoadContent().
             AnimationData.Add("uiShovel", shovelGrup);
 
 
-            // 1. Cargar la textura
-            // NOTA: MonoGame elimina el tipo de archivo (como el .png) y la ruta 'Content/'.
-            // Ejemplo, "Content/peaShooterAnimTest.png" se vuelve "peaShooterAnimTest"
+            // --- UI Sun Icon ---
             Texture2D uiSunTex = content.Load<Texture2D>("uiSun-Sheet");
-
-            // 2. Crear el grupo.
             var uiSunGrup = new AnimationGroup(uiSunTex, 11, 11);
-
-            // 3. Crear animaciónes.
             var uiSunAnim = new Animation(0, 4, 5);
             uiSunAnim.AddFrame(0, new Frame(0.5f));
             uiSunAnim.AddFrame(1, new Frame(0.5f));
-
-            // 4. Añadir animaciones al grupo
             uiSunGrup.AddAnimation("default", uiSunAnim);
-
-            // 5. Añadir el grupo al diccionario principal. JC: Nunca olviden tambien instanciar esta clase en AnimationData.LoadContent().
             AnimationData.Add("uiSun", uiSunGrup);
 
 
-            // 1. Cargar la textura
-            // NOTA: MonoGame elimina el tipo de archivo (como el .png) y la ruta 'Content/'.
-            // Ejemplo, "Content/peaShooterAnimTest.png" se vuelve "peaShooterAnimTest"
-            Texture2D uiPlantSeedsTex = content.Load<Texture2D>("seeds");
+            // --- UI Seed Packets (uiSeeds) ---
+            Texture2D seedsTex = content.Load<Texture2D>("seeds");
+            var seedsGrup = new AnimationGroup(seedsTex, 18, 33);
 
-            // 2. Crear el grupo.
-            var uiPlantSeedsGrup = new AnimationGroup(uiPlantSeedsTex, 18, 18);
+            // 3. Crear una ÚNICA animación "default".
+            var defaultSeedsAnim = new Animation((int)PlantSubtypes.PeaShooter, 9, 16.5f); // Row 0, Origen (9, 16.5) - Centro del slot
+            defaultSeedsAnim.AddFrame(0, new Frame(Globals.HUGE)); // Frame 0: Icono OK (Brillante)
+            defaultSeedsAnim.AddFrame(1, new Frame(Globals.HUGE)); // Frame 1: Icono Gris/Recarga
 
-            // 3. Crear animaciónes.
-            var uiPlantSeedsAnimPeaShooter = new Animation(0, 9, 9);
-            uiPlantSeedsAnimPeaShooter.AddFrame(0, new Frame(Globals.HUGE));
-            uiPlantSeedsAnimPeaShooter.AddFrame(1, new Frame(Globals.HUGE));
+            // 4. Añadir la animación al grupo.
+            seedsGrup.AddAnimation("default", defaultSeedsAnim);
 
-            var uiPlantSeedsAnimSunflower = new Animation(1, 9, 9);
-            uiPlantSeedsAnimSunflower.AddFrame(0, new Frame(Globals.HUGE));
-            uiPlantSeedsAnimSunflower.AddFrame(1, new Frame(Globals.HUGE));
-
-            var uiPlantSeedsAnimWallnut = new Animation(2, 9, 9);
-            uiPlantSeedsAnimWallnut.AddFrame(0, new Frame(Globals.HUGE));
-            uiPlantSeedsAnimWallnut.AddFrame(1, new Frame(Globals.HUGE));
-
-            // 4. Añadir animaciones al grupo
-            uiPlantSeedsGrup.AddAnimation("0", uiPlantSeedsAnimPeaShooter); //Estos son los subtypes de PlantSubtypesEnum.
-            uiPlantSeedsGrup.AddAnimation("1", uiPlantSeedsAnimSunflower);
-            uiPlantSeedsGrup.AddAnimation("2", uiPlantSeedsAnimWallnut);
-
-            // 5. Añadir el grupo al diccionario principal. JC: Nunca olviden tambien instanciar esta clase en AnimationData.LoadContent().
-            AnimationData.Add("uiSeeds", uiPlantSeedsGrup);
+            // 5. Añadir el grupo al diccionario principal.
+            AnimationData.Add("uiSeeds", seedsGrup);
 
 
-            // 1. Cargar la textura
-            // NOTA: MonoGame elimina el tipo de archivo (como el .png) y la ruta 'Content/'.
-            // Ejemplo, "Content/peaShooterAnimTest.png" se vuelve "peaShooterAnimTest"
-            Texture2D waveBarBoxTex = content.Load<Texture2D>("waveBar");
+            // --- UI Wave Bar ---
+            // 🚨 CORRECCIÓN CS1002/CS1526: Eliminamos el 'new new' redundante y usamos nombres locales limpios.
+            Texture2D waveBarTex = content.Load<Texture2D>("waveBar");
+            var waveBarGrup = new AnimationGroup(waveBarTex, 88, 8);
 
-            // 2. Crear el grupo.
-            var waveBarBoxGrup = new AnimationGroup(waveBarBoxTex, 88, 8);
-
-            // 3. Crear animaciónes.
-            var waveBarAnimBox = new Animation(0, 4, 2);
+            var waveBarAnimBox = new Animation(0, 4, 2); // ⬅️ Corregido: solo 'new Animation'
             waveBarAnimBox.AddFrame(0, new Frame(Globals.HUGE));
 
-            var waveBarAnimFiller = new Animation(1, 4, 2);
+            var waveBarAnimFiller = new Animation(1, 4, 2); // ⬅️ Corregido: solo 'new Animation'
             waveBarAnimFiller.AddFrame(0, new Frame(Globals.HUGE));
 
             // 4. Añadir animaciones al grupo
-            waveBarBoxGrup.AddAnimation("waveBarBox", waveBarAnimBox);
-            waveBarBoxGrup.AddAnimation("waveBarFiller", waveBarAnimFiller);
+            waveBarGrup.AddAnimation("waveBarBox", waveBarAnimBox);
+            waveBarGrup.AddAnimation("waveBarFiller", waveBarAnimFiller);
 
-            // 5. Añadir el grupo al diccionario principal. JC: Nunca olviden tambien instanciar esta clase en AnimationData.LoadContent().
-            AnimationData.Add("uiWaveBar", waveBarBoxGrup);
+            // 5. Añadir el grupo al diccionario principal. 
+            AnimationData.Add("uiWaveBar", waveBarGrup);
         }
     }
 }

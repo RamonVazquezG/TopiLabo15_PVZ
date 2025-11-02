@@ -25,6 +25,18 @@ public static class MouseInput
     /// </summary>
     public static bool LeftButtonReleased { get; private set; }
 
+    // INICIO: CORRECCIÓN CS0117
+    /// <summary>
+    /// Verdadero SÓLO en el frame en que se HACE clic derecho (transición de Soltado a Presionado).
+    /// </summary>
+    public static bool RightButtonPressed { get; private set; }
+
+    /// <summary>
+    /// Verdadero SÓLO en el frame en que se SUELTA el clic derecho (transición de Presionado a Soltado).
+    /// </summary>
+    public static bool RightButtonReleased { get; private set; }
+    // FIN: CORRECCIÓN CS0117
+
     /// <summary>
     /// La posición actual del cursor en la pantalla (como Vector2).
     /// </summary>
@@ -72,5 +84,16 @@ public static class MouseInput
         LeftButtonReleased =
             (previousState.LeftButton == ButtonState.Pressed) &&
             (currentState.LeftButton == ButtonState.Released);
+
+        // INICIO: CORRECCIÓN CS0117
+        // 5. Calcular los estados del botón derecho
+        RightButtonPressed =
+            (previousState.RightButton == ButtonState.Released) &&
+            (currentState.RightButton == ButtonState.Pressed);
+
+        RightButtonReleased =
+            (previousState.RightButton == ButtonState.Pressed) &&
+            (currentState.RightButton == ButtonState.Released);
+        // FIN: CORRECCIÓN CS0117
     }
 }
