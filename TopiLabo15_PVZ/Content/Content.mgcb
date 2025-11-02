@@ -37,7 +37,12 @@
 /processorParam:TextureFormat=Color
 /build:peaShooterAnimTest.png
 
-
+#begin PixelFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:PixelFont.spritefont
 
 #begin seeds.png
 /importer:TextureImporter

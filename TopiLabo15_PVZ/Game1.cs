@@ -65,6 +65,20 @@ public class Game1 : Game
             // _pixelFont = new SpriteFont(...);
         }
 
+        // --- INICIO: Diagnóstico de Fuente ---
+        if (_pixelFont == null)
+        {
+            Debug.WriteLine("¡ERROR CRÍTICO! _pixelFont es nulo después de Content.Load.");
+            // Esta línea detendrá la ejecución si _pixelFont es nulo, obligándote a ver el error.
+            Debug.Assert(_pixelFont != null, "La fuente 'PixelFont' no se pudo cargar. Revisa Content.mgcb y el archivo .spritefont.");
+        }
+        else
+        {
+            Debug.WriteLine($"Fuente 'PixelFont' cargada exitosamente. Tamaño medido de '1': {_pixelFont.MeasureString("1")}");
+        }
+        // --- FIN: Diagnóstico de Fuente ---
+
+
         Debug.WriteLine("PAPUUUUU");
 
         // ¡Inicia el juego cambiando al primer estado!
