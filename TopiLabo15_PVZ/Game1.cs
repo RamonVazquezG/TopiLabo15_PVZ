@@ -49,7 +49,7 @@ public class Game1 : Game
 
         // Carga las animaciones (¡importante!)
         AnimationData.LoadContent(Content);
-
+        TopiLabo15_PVZ.Data.UIManager.LoadContent(Content, GraphicsDevice);
         Debug.WriteLine("PAPUUUUU");
 
         // ¡Inicia el juego cambiando al primer estado!

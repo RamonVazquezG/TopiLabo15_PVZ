@@ -36,7 +36,7 @@ namespace TopiLabo15_PVZ.Classes.Entities
 
         public override void InitCallback()
         {
-            this.Hitbox = new Hitbox(this, this.BoardY, new Vector2(20f, 20f), null, "plantHurtbox");
+            AddHitbox(new Hitbox(this, this.BoardY, new Vector2(20f, 20f), null, "plantHurtbox"));
         }
 
         public override void PostUpdateCallback(float dt)
