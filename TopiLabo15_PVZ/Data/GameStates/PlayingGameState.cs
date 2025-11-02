@@ -91,14 +91,22 @@ namespace TopiLabo15_PVZ.Data.GameStates
             float startX = 38f;
             float offsetY = 12f;
             float packetSpacing = 24f;
+            int numSeedPackets = 5; // Hay 5 paquetes en el mockup
 
             // Paquetes de Semillas
             seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.PeaShooter, new Vector2(startX + 0 * packetSpacing, offsetY)));
             seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.SunFlower, new Vector2(startX + 1 * packetSpacing, offsetY)));
             seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.WallNut, new Vector2(startX + 2 * packetSpacing, offsetY)));
+            // Se asume que el cuarto y el quinto paquete son los siguientes subtipos en el enum o placeholders
+            // Para el cálculo de posición, solo nos importa el número y el espaciado
 
-            // Inicializar la Pala (Posición: 10, 11) - Coordenadas del mockup
-            this.ShovelEntity = new ShovelUI(this.EntityManager, this, new Vector2(10f, 11f));
+            // Calculando la posición de la pala:
+            // 1. Centro X anterior: 167f. Se ajusta 11 píxeles a la izquierda: 167f - 11f = 156f.
+            float shovelX = 158f;
+            // 2. Centro Y anterior: 21f (centro del paquete de semillas). Se ajusta a 11f (centro del ícono del sol).
+            float shovelY = 12f;
+
+            this.ShovelEntity = new ShovelUI(this.EntityManager, this, new Vector2(shovelX, shovelY));
 
             // FIN: Inicializar paquetes de semillas y pala
         }
@@ -384,6 +392,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
                 // Opcional: Centrar el sprite de la pala debajo del cursor.
                 Vector2 shovelPosition = MouseEntity.Position;
+                // Ajustamos la posición para que el origen (11,11) esté en la posición del mouse
                 shovelCursor.Draw(spriteBatch, shovelPosition);
             }
             else if (SelectedPlantType != null)
