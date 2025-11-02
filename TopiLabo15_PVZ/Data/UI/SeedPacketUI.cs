@@ -113,35 +113,21 @@ namespace TopiLabo15_PVZ.Data.UI
 
             this.Sprite.Draw(spriteBatch, this.Position);
 
-            // --- DIBUJADO DE TEXTO (Costo) ---
+            // --- ¡NUEVO! DIBUJADO DE TEXTO (Costo) ---
             if (_pixelFont != null)
             {
                 string costText = Cost.ToString();
                 Vector2 textSize = _pixelFont.MeasureString(costText);
 
-                // Posición X: Centrado horizontalmente. (this.Position.X + 9f) es el centro del paquete.
-                float targetX = this.Position.X + (9f - textSize.X / 2f);
+                // Posición para el costo: Centrado horizontalmente en la parte inferior del paquete.
+                // Offset horizontal: 9f (mitad del ancho del paquete) - textSize.X / 2f
+                // Offset vertical: 12f (borde inferior)
+                Vector2 textPosition = this.Position + new Vector2(9f - textSize.X / 2f, 12f);
 
-                // Posición Y: Ajustado para estar dentro del área blanca del paquete (ej. y=12f)
-                float targetY = this.Position.Y + 11f; // 11f (offset vertical para colocarlo en la parte inferior del paquete)
-
-                Vector2 textPosition = new Vector2(targetX, targetY);
-
-                // Color: Blanco o Gris si no está listo
+                // Color: Blanco o Amarillo si está listo y con suficiente sol
                 Color textColor = IsReady() ? Color.White : Color.Gray;
 
-                // 🚨 AJUSTE FINAL: Usar 1.0f para asegurar que esté ABSOLUTAMENTE en la capa frontal.
-                spriteBatch.DrawString(
-                    _pixelFont,
-                    costText,
-                    textPosition,
-                    textColor, // Usamos el color calculado (White o Gray)
-                    0f, // rotation
-                    Vector2.Zero, // origin
-                    1f, // scale
-                    SpriteEffects.None,
-                    1.0f // LayerDepth: ¡ABSOLUTAMENTE al frente!
-                );
+                spriteBatch.DrawString(_pixelFont, costText, textPosition, textColor);
             }
             // FIN: DIBUJADO DE TEXTO
 

@@ -371,34 +371,18 @@ namespace TopiLabo15_PVZ.Data.GameStates
             Vector2 sunIconPosition = new Vector2(11f, 11f);
             UISun.Draw(spriteBatch, sunIconPosition);
 
-            // --- Dibuja el contador de Soles ---
+            // --- ¡NUEVO! Dibuja el contador de Soles ---
             if (_pixelFont != null)
             {
                 string sunText = SunCount.ToString();
                 Vector2 textSize = _pixelFont.MeasureString(sunText);
 
-                // Posición X: Centrada en el icono del Sol (ancho del icono es 22, centro es 11) -> 11f
-                // Posición Y: Ligeramente debajo del icono (icono mide 22, el texto debe ir debajo, ej. en y=22 o 24)
+                // Posición (23f, 21f) para centrarlo debajo del sol.
+                // Posición X: 11f (centro sol) + 12f (offset)
+                // Posición Y: 21f (debajo del sol)
+                Vector2 textPosition = new Vector2(23f - textSize.X / 2, 31f);
 
-                // Icono del sol: 22x22. Centro horizontal: 11f. Borde inferior: 22f.
-                // Queremos centrar el texto horizontalmente en x=11f y situarlo en y=24f (justo debajo)
-                float targetX = sunIconPosition.X + (11f - textSize.X / 2); // 11f (centro) - textSize.X / 2.
-                float targetY = sunIconPosition.Y + 13f; // 11f (inicio) + 13f de offset, para que se vea bien centrado en el hueco del sprite.
-
-                Vector2 textPosition = new Vector2(targetX, targetY);
-
-                // 🚨 AJUSTE FINAL: Usar 1.0f para asegurar que esté ABSOLUTAMENTE en la capa frontal.
-                spriteBatch.DrawString(
-                    _pixelFont,
-                    sunText,
-                    textPosition,
-                    Color.White, // Aseguramos que el color sea blanco
-                    0f, // rotation
-                    Vector2.Zero, // origin
-                    1f, // scale
-                    SpriteEffects.None,
-                    1.0f // LayerDepth: ¡ABSOLUTAMENTE al frente!
-                );
+                spriteBatch.DrawString(_pixelFont, sunText, textPosition, Color.White);
             }
             // FIN: Dibuja el contador de Soles
 
@@ -469,7 +453,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
             {
                 Debug.WriteLine("¡Un zombi ha llegado a tu casa! Fin del juego.");
                 // Aquí puedes añadir la lógica para terminar o reiniciar el juego.
-                // Por ejemplo, podrías cambiar a un nuevo estado de juego:
+                // Por ejemplo, para reiniciar, podrías cambiar a un nuevo estado de juego:
                 GameManager.SwitchGameState(new PlayingGameState());
             }
         }
