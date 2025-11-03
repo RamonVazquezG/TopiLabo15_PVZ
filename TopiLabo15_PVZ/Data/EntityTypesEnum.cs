@@ -9,6 +9,7 @@
         ZombieHazard,
         Pickup,
         UI,
-        Mouse
+        Mouse,
+        Shovel
     }
 }
