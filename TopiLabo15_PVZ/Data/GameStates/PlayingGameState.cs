@@ -365,6 +365,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
                 Debug.WriteLine("¡Un zombi ha llegado a tu casa! Fin del juego.");
                 // Aquí puedes añadir la lógica para terminar o reiniciar el juego.
                 // Por ejemplo, para reiniciar, podrías cambiar a un nuevo estado de juego:
+                Globals.SCORE = 0; // Reinicia el puntaje al perder
                 GameManager.SwitchGameState(new PlayingGameState());
             }
         }

@@ -90,5 +90,27 @@ namespace TopiLabo15_PVZ.Classes.Entities
                 }
             }
         }
+
+        // JR: Método para recibir daño
+        public void TakeDamage(float amount)
+        {
+            this.Health -= amount; //Resta la cantidad de daño recibida
+
+            if (this.Health <= 0 && !this.IsRemoved) //Valida si muere y aun no esta marcado como elimindo
+            {
+                Globals.AddScore(100); // Suma 100 puntos por zombi
+
+                this.Velocity = Vector2.Zero; // detiene el movimientod el zombi
+                this.Health = 0;
+
+                // Espera un poquito antes de eliminarlo para evitar un error de colección
+                System.Threading.Tasks.Task.Run(async () =>
+                {
+                    await System.Threading.Tasks.Task.Delay(50);
+                    this.Remove(); // lo elimina medio segundo después
+                });
+            }
+        }
+
     }
 }

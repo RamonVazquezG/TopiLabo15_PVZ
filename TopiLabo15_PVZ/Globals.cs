@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics; //JR: Necesario para el score
 
 namespace TopiLabo15_PVZ
 {
@@ -10,6 +11,10 @@ namespace TopiLabo15_PVZ
         public const float PI = 3.14159265359f;
         public const float TILE_SIZE = 24.0f;
         public const float HALF_TILE_SIZE = TILE_SIZE/2f;
+
+        //JR: variables para el puntaje 
+        public static int SCORE = 0; //para el puntaje actual
+        public static int HIGH_SCORE = 0; //para el puntaje record
 
         public static float Lerp(float a, float b, float t)
         {
@@ -38,6 +43,18 @@ namespace TopiLabo15_PVZ
             // 'abs' en Lua es 'MathF.Abs' en C#
             // 'lim or 0' se maneja con el valor por defecto del parámetro 'lim = 0.0f'
             return MathF.Abs(result - b) < lim ? b : result;
+        }
+
+        //JR: Método para calcular el puntaje
+        public static void AddScore( int puntos) 
+        {
+            SCORE += puntos; //Le suma los puntos al puntaje
+
+            if (SCORE > HIGH_SCORE) // Si el puntaje actual supera el récord previo, lo actualiza
+                HIGH_SCORE = SCORE;
+
+            Debug.WriteLine($"--Zombi eliminado--");
+            Debug.WriteLine($"Puntaje actual: {SCORE} | Récord: {HIGH_SCORE}");
         }
     }
 }
