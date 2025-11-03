@@ -4,6 +4,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media; //JR: Para la music sisi c:
 using System;
 using System.Diagnostics;
 using TopiLabo15_PVZ.Data.GameStates;
@@ -12,6 +13,7 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private Song musicaFondo; //JR: Para la musica de fondo jiji
 
     // Instancias de tus estados de juego
     // (Asumiendo que has creado estas clases que heredan de GameState)
@@ -54,6 +56,14 @@ public class Game1 : Game
 
         // ¡Inicia el juego cambiando al primer estado!
         GameManager.SwitchGameState(_playingState);
+
+        //JR: Cargar la música  
+        musicaFondo = Content.Load<Song>("musica_fondo"); 
+
+        //JR: Reproducir musica
+        MediaPlayer.IsRepeating = true; //para que se repita en bucle
+        MediaPlayer.Volume = 0.6f; //Volumen medio
+        MediaPlayer.Play(musicaFondo);
     }
 
     protected override void Update(GameTime gameTime)
