@@ -34,6 +34,9 @@ namespace TopiLabo15_PVZ.Data.GameStates
         SpriteAnimator BGPatio; //Nunca inicialicen sprites aquí. Haganlo en OnInit.
         SpriteAnimator UIWaveBar;
         SpriteAnimator UISun;
+        
+        NumberSpriteUI UISunCount;
+        NumberSpriteUI UIWaveCount;
 
         // INICIO: CAMPOS DE PLANTADO/DESPLANTADO
         public Mouse MouseEntity { get; private set; } // Referencia al mouse para interacción
@@ -70,7 +73,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         private float GetNextZombieRate()
         {
-            float divide = MathF.Pow(WaveCounter, 1.75f); //Aumenta la dificultad con cada ola, aumentando la velocidad de aparición de los zombies por un 3% por ola.
+            float divide = MathF.Pow(WaveCounter, 2f); //Aumenta la dificultad con cada ola, aumentando la velocidad de aparición de los zombies por un 3% por ola.
             return Globals.Lerp(ZombieRate.X, ZombieRate.Y, WaveTimeProgress / WaveDuration) / divide;
         }
 
@@ -84,6 +87,9 @@ namespace TopiLabo15_PVZ.Data.GameStates
             BGPatio = new SpriteAnimator("patio", "default");
             UIWaveBar = new SpriteAnimator("uiWaveBar", "waveBarBox");
             UISun = new SpriteAnimator("uiSun", "default");
+
+            UISunCount = new NumberSpriteUI(EntityManager, new Vector2(10f, 18f), "suns");
+            UIWaveCount = new NumberSpriteUI(EntityManager, new Vector2(152f, 174f), "waves");
 
             this.MouseEntity = new Mouse(this.EntityManager);
 
@@ -143,8 +149,8 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         public void DoFinalWave()
         {
-            float zombiesToSpawn = 5 + (WaveCounter * WaveCounter) * 2f;
-            float tileOffset = WaveCounter * WaveCounter * 0.125f;
+            float zombiesToSpawn = 2 + (WaveCounter * WaveCounter) * 3f;
+            float tileOffset = 1.75f + (WaveCounter * WaveCounter * 0.25f);
 
             Debug.WriteLine($"Final Wave! Spawning {zombiesToSpawn} zombies.");
             for (float i = 0; i < zombiesToSpawn; i++)
@@ -350,6 +356,13 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
         public override void PostDrawCallback(SpriteBatch spriteBatch)
         {
+            //Dibujar el contador de soles
+            UISunCount.SetCount(SunCount);
+            UISunCount.Draw(spriteBatch);
+            //Dibujar el contador de olas
+            UIWaveCount.SetCount(WaveCounter - 1);
+            UIWaveCount.Draw(spriteBatch);
+
             //Dibujar la barra de ola
             UIWaveBar.Play("waveBarBox");
             UIWaveBar.Scale = Vector2.One;

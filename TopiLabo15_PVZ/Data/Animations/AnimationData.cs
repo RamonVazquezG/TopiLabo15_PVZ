@@ -36,5 +36,6 @@ public static class AnimationData
         new SunPickupAnims(content);
         new SunFlowerAnims(content);
         new UIAnims(content);
+        new NumberSpritesAnims(content);
     }
 }

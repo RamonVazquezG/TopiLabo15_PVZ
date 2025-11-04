@@ -148,7 +148,7 @@ public abstract class Entity
     {
         if (IsRemoved) return; // No eliminar dos veces
 
-        this.ClearHitboxes();
+        //this.ClearHitboxes();
 
         this.IsRemoved = true;
         this.OnRemove(); // Llama al trigger
