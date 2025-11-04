@@ -35,15 +35,17 @@ namespace TopiLabo15_PVZ.Data.GameStates
         SpriteAnimator UIWaveBar;
         SpriteAnimator UISun;
 
-        // INICIO: CAMPOS DE PLANTADO
+        // INICIO: CAMPOS DE PLANTADO/DESPLANTADO
         public Mouse MouseEntity { get; private set; } // Referencia al mouse para interacción
         public PlantSubtypes? SelectedPlantType { get; set; } = null; // Planta seleccionada
         private List<SeedPacketUI> seedPackets = new List<SeedPacketUI>(); // Lista de paquetes
 
+        public ShovelUI ShovelEntity { get; private set; } // ¡NUEVO! Referencia a la pala
+
         // Constantes del tablero
-        private Vector2 BoardOffset;
-        private float TileSize;
-        // FIN: CAMPOS DE PLANTADO
+        private readonly Vector2 BoardOffset;
+        private readonly float TileSize;
+        // FIN: CAMPOS DE PLANTADO/DESPLANTADO
 
         // NOTA: Se necesita una SpriteFont para dibujar texto en DrawString.
         // public SpriteFont myFont; 
@@ -53,6 +55,8 @@ namespace TopiLabo15_PVZ.Data.GameStates
             NextZombieRate = ZombieRate.X;
 
             // INICIO: Inicializar constantes del tablero
+            // Hacemos que la clase PlayingGameState tenga sus propias copias inmutables de estas constantes
+            // para que los métodos como GetTileAtMouse sean más limpios.
             this.TileSize = Globals.TILE_SIZE;
             this.BoardOffset = new Vector2(this.TileSize * 1.0f, this.TileSize * 2.0f);
             // FIN: Inicializar constantes del tablero
@@ -83,27 +87,50 @@ namespace TopiLabo15_PVZ.Data.GameStates
 
             this.MouseEntity = new Mouse(this.EntityManager);
 
-            // INICIO: Inicializar paquetes de semillas
-            // Usamos la posición de la esquina superior izquierda de cada slot (aprox. X=50, Y=1)
+            // INICIO: Inicializar paquetes de semillas y pala
             float startX = 38f;
             float offsetY = 12f;
             float packetSpacing = 24f;
+            int numSeedPackets = 5; // Hay 5 paquetes en el mockup
 
-            // 🚨 CORRECCIÓN VISUAL: Coordenadas de la esquina superior izquierda del slot.
-            // SeedPacketUI.Draw() ahora se encargará de añadir el offset de 9x9.
+            // Paquetes de Semillas
             seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.PeaShooter, new Vector2(startX + 0 * packetSpacing, offsetY)));
             seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.SunFlower, new Vector2(startX + 1 * packetSpacing, offsetY)));
             seedPackets.Add(new SeedPacketUI(this.EntityManager, this, PlantSubtypes.WallNut, new Vector2(startX + 2 * packetSpacing, offsetY)));
+            // Se asume que el cuarto y el quinto paquete son los siguientes subtipos en el enum o placeholders
+            // Para el cálculo de posición, solo nos importa el número y el espaciado
 
-            // Establecer sol inicial
-            //this.SunCount = 100;
-            // FIN: Inicializar paquetes de semillas
+            // Calculando la posición de la pala:
+            // 1. Centro X anterior: 167f. Se ajusta 11 píxeles a la izquierda: 167f - 11f = 156f.
+            float shovelX = 158f;
+            // 2. Centro Y anterior: 21f (centro del paquete de semillas). Se ajusta a 11f (centro del ícono del sol).
+            float shovelY = 12f;
+
+            this.ShovelEntity = new ShovelUI(this.EntityManager, this, new Vector2(shovelX, shovelY));
+
+            // FIN: Inicializar paquetes de semillas y pala
         }
 
         public void IncrementSunCount(int amount)
         {
             SunCount += amount;
             Debug.WriteLine($"Sun Count: {SunCount}");
+        }
+
+        // Función para obtener las coordenadas de la casilla del tablero bajo el mouse.
+        // Devuelve (x, y) en coordenadas de tablero (0-8, 0-4).
+        private (int boardX, int boardY) GetTileAtMouse()
+        {
+            Vector2 mouseWorldPos = MouseEntity.Position;
+            int boardX = (int)MathF.Floor((mouseWorldPos.X - BoardOffset.X) / TileSize);
+            int boardY = (int)MathF.Floor((mouseWorldPos.Y - BoardOffset.Y) / TileSize);
+            return (boardX, boardY);
+        }
+
+        // Función para verificar si la posición del tablero es válida (dentro de los límites 0-8, 0-4)
+        private bool IsBoardPositionValid(int boardX, int boardY)
+        {
+            return boardX >= 0 && boardX <= 8 && boardY >= 0 && boardY <= 4;
         }
 
         private void SpawnZombie(float offsetX = 0)
@@ -145,21 +172,36 @@ namespace TopiLabo15_PVZ.Data.GameStates
             }
         }
 
-        // INICIO: LÓGICA DE PLANTADO
+        // --- LÓGICA DE DESPLANTADO ---
+        // Método para eliminar una planta en una casilla específica
+        public bool TryRemovePlant(int boardX, int boardY)
+        {
+            if (!IsBoardPositionValid(boardX, boardY)) return false;
+
+            // Busca la primera planta que coincida con las coordenadas del tablero
+            Plant plantToRemove = EntityManager.GetEntities()
+                .OfType<Plant>() // Filtra solo las entidades de tipo Plant
+                .FirstOrDefault(p => p.BoardX == boardX && p.BoardY == boardY);
+
+            if (plantToRemove != null)
+            {
+                // ¡Eliminar la planta!
+                plantToRemove.Remove();
+                Debug.WriteLine($"Removed plant at ({boardX}, {boardY})");
+                return true;
+            }
+
+            return false;
+        }
+        // --- FIN LÓGICA DE DESPLANTADO ---
+
         // Método para verificar si una casilla está ocupada
         public bool IsTileOccupied(int boardX, int boardY)
         {
-            foreach (var entity in EntityManager.GetEntities())
-            {
-                if (entity.TYPE == EntityTypes.Plant && entity is Plant plant)
-                {
-                    if (plant.BoardX == boardX && plant.BoardY == boardY)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            // Usamos LINQ para una comprobación más limpia
+            return EntityManager.GetEntities()
+                .OfType<Plant>() // Solo busca entre plantas
+                .Any(plant => plant.BoardX == boardX && plant.BoardY == boardY);
         }
 
         // Método auxiliar para intentar colocar la planta
@@ -171,6 +213,7 @@ namespace TopiLabo15_PVZ.Data.GameStates
             if (IsTileOccupied(boardX, boardY)) return false;
             if (!packet.IsReady()) return false;
 
+            // Se asume que el costo ya fue validado en IsReady()
             SunCount -= packet.Cost;
             packet.StartRecharge();
 
@@ -194,17 +237,37 @@ namespace TopiLabo15_PVZ.Data.GameStates
             return true;
         }
 
-        private void UpdatePlanting()
+        private void UpdatePlantingAndShovel()
         {
-            if (SelectedPlantType != null)
-            {
-                // 1. Calcular coordenadas del tablero a partir de la posición del mouse
-                Vector2 mouseWorldPos = MouseEntity.Position;
-                int boardX = (int)MathF.Floor((mouseWorldPos.X - BoardOffset.X) / TileSize);
-                int boardY = (int)MathF.Floor((mouseWorldPos.Y - BoardOffset.Y) / TileSize);
+            var (boardX, boardY) = GetTileAtMouse();
+            bool isOverValidTile = IsBoardPositionValid(boardX, boardY);
 
-                // Comprobación de límites (9 columnas x 5 filas: 0-8, 0-4)
-                bool isOverValidTile = boardX >= 0 && boardX <= 8 && boardY >= 0 && boardY <= 4;
+            if (ShovelEntity.IsSelected)
+            {
+                // 1. Deseleccionar planta si está seleccionada
+                SelectedPlantType = null;
+
+                // 2. Intentar desplantar con clic izquierdo
+                if (MouseInput.LeftButtonPressed)
+                {
+                    if (isOverValidTile)
+                    {
+                        if (TryRemovePlant(boardX, boardY))
+                        {
+                            // Después de usar la pala, se deselecciona
+                            ShovelEntity.Deselect();
+                        }
+                    }
+                    else
+                    {
+                        // Si hace clic fuera del tablero, se deselecciona
+                        ShovelEntity.Deselect();
+                    }
+                }
+            }
+            else if (SelectedPlantType != null)
+            {
+                // 1. Si tenemos una planta seleccionada, la pala se deselecciona (manejado en ShovelUI.UpdateCallback)
 
                 // 2. Manejar la colocación (clic izquierdo)
                 if (MouseInput.LeftButtonPressed)
@@ -222,29 +285,27 @@ namespace TopiLabo15_PVZ.Data.GameStates
                     }
                 }
 
-                // 3. Clic derecho siempre deselecciona
-                if (MouseInput.RightButtonPressed)
-                {
-                    SelectedPlantType = null;
-                }
-            }
-
-            // 4. Deseleccionar si el paquete ya no está listo (por falta de sol o recarga)
-            if (SelectedPlantType != null)
-            {
+                // 3. Deseleccionar si el paquete ya no está listo (por falta de sol o recarga)
                 var selectedPacket = seedPackets.FirstOrDefault(p => p.PlantType == SelectedPlantType);
                 if (selectedPacket != null && !selectedPacket.IsReady())
                 {
                     SelectedPlantType = null;
                 }
             }
+
+            // 4. Clic derecho siempre deselecciona planta o pala
+            if (MouseInput.RightButtonPressed)
+            {
+                SelectedPlantType = null;
+                ShovelEntity.Deselect();
+            }
         }
-        // FIN: LÓGICA DE PLANTADO
+        // FIN: LÓGICA DE PLANTADO Y DESPLANTADO
 
         public override void PreUpdateCallback(float dt)
         {
             UISun.Update(dt);
-            UpdatePlanting(); // Llamar a la lógica de plantado
+            UpdatePlantingAndShovel(); // Llama a la lógica de plantado y desplantado
 
             // Generar soles automáticamente cada 10 segundos
             SunGenerationTimer += dt;
@@ -322,8 +383,19 @@ namespace TopiLabo15_PVZ.Data.GameStates
             }
             // FIN: LÓGICA DE CONTADOR DE SOL EN HOVER
 
-            // --- Previsualizador de Planta (Follow-Mouse) ---
-            if (SelectedPlantType != null)
+            // --- Previsualizador de Planta o Pala (Follow-Mouse) ---
+            if (ShovelEntity.IsSelected)
+            {
+                // Si la pala está seleccionada, dibuja su ícono siguiendo el mouse
+                SpriteAnimator shovelCursor = new SpriteAnimator("uiShovel", "default");
+                shovelCursor.LayerDepth = 0.9f;
+
+                // Opcional: Centrar el sprite de la pala debajo del cursor.
+                Vector2 shovelPosition = MouseEntity.Position;
+                // Ajustamos la posición para que el origen (11,11) esté en la posición del mouse
+                shovelCursor.Draw(spriteBatch, shovelPosition);
+            }
+            else if (SelectedPlantType != null)
             {
                 Vector2 mouseWorldPos = MouseEntity.Position;
                 var packet = seedPackets.FirstOrDefault(p => p.PlantType == SelectedPlantType);
