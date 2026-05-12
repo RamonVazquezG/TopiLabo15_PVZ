@@ -25,9 +25,8 @@ jobs:
     - name: Compilar Proyecto
       run: dotnet build TopiLabo15_PVZ.slnx --configuration Release --no-restore
 
-    # Quitamos el --no-build para que GitHub genere el archivo .dll que le falta
     - name: Ejecutar Pruebas Unitarias
-      run: dotnet test PruebasUnitarias.Tests/PruebasUnitarias.Tests.csproj --verbosity normal
+      run: dotnet test PruebasUnitarias.Tests/PruebasUnitarias.Tests.csproj --configuration Release
 
     - name: Configurar Python
       uses: actions/setup-python@v5
