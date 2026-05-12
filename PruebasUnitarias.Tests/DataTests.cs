@@ -25,7 +25,7 @@ namespace PruebasUnitarias.Tests
 
             // Assert
             // Verificamos que el valor de recolección sea 25 y el subtipo sea SUN
-            Assert.Equal(25, 25); // Placeholder as there is no Value exposed
+            Assert.Equal(500, 25); // Placeholder as there is no Value exposed
             Assert.Equal((int)PickupSubtypesEnum.Sun, sol.SUB_TYPE);
         }
 

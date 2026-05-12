@@ -17,7 +17,7 @@ namespace TopiLabo15_PVZ.Data.Plants
         public Sunflower(EntityManager manager, int boardX, int boardY)
             : base(manager, (int?)PlantSubtypes.SunFlower, boardX, boardY)
         {
-            this.SunCost = 500;        // ⬅️ ¡NUEVO! Costo de Sol.
+            this.SunCost = 50;        // ⬅️ ¡NUEVO! Costo de Sol.
             this.RechargeTime = 7.5f; // ⬅️ ¡NUEVO! Tiempo de recarga (corto)
 
             _sunTimer = SUN_PRODUCTION_TIME/2 - (Random.Shared.NextSingle() * 3f); // Generar con mas anticipacion el primer sol y con algo de aleatoriedad.
