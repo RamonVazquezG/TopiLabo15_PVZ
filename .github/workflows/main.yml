@@ -23,14 +23,14 @@ jobs:
         dotnet-version: '9.0.x' 
 
     - name: Restaurar dependencias
-      run: dotnet restore
+      run: dotnet restore PruebasVsZombies/TopiLabo15_PVZ.sln
 
     - name: Compilar Proyecto
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build PruebasVsZombies/TopiLabo15_PVZ.sln --configuration Release --no-restore
 
-    # Ejecuta las pruebas unitarias
+    # Ejecutar las pruebas unitarias
     - name: Ejecutar Pruebas Unitarias
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test PruebasVsZombies/PruebasUnitarias.Tests/PruebasUnitarias.Tests.csproj --verbosity normal
 
     
     #PyAutoGUI requiere Python, así que configuramos el entorno de Python para las pruebas de UI
