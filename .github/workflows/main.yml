@@ -1,6 +1,5 @@
-name: Pipeline de Pruebas PvZ - Nuevo Repo
+name: Pipeline de Pruebas PvZ
 
-# Se activa al hacer push a la rama master
 on:
   push:
     branches: [ "master" ]
@@ -9,31 +8,27 @@ on:
 
 jobs:
   build-and-test:
-    # Se ejecuta en un runner de Windows para compatibilidad con PyAutoGUI y las pruebas de UI  
     runs-on: windows-latest
 
     steps:
     - name: Checkout del código
       uses: actions/checkout@v4
 
-    # Es la configuración básica para proyectos .NET
     - name: Configurar .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.x' 
 
     - name: Restaurar dependencias
-      run: dotnet restore PruebasVsZombies/TopiLabo15_PVZ.sln
+      run: dotnet restore TopiLabo15_PVZ.slnx
 
     - name: Compilar Proyecto
-      run: dotnet build PruebasVsZombies/TopiLabo15_PVZ.sln --configuration Release --no-restore
+      run: dotnet build TopiLabo15_PVZ.slnx --configuration Release --no-restore
 
-    # Ejecutar las pruebas unitarias
+    # Quitamos el --no-build para que GitHub genere el archivo .dll que le falta
     - name: Ejecutar Pruebas Unitarias
-      run: dotnet test PruebasVsZombies/PruebasUnitarias.Tests/PruebasUnitarias.Tests.csproj --verbosity normal
+      run: dotnet test PruebasUnitarias.Tests/PruebasUnitarias.Tests.csproj --verbosity normal
 
-    
-    #PyAutoGUI requiere Python, así que configuramos el entorno de Python para las pruebas de UI
     - name: Configurar Python
       uses: actions/setup-python@v5
       with:
@@ -44,6 +39,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyautogui pytest
 
-    # Ejecuta los escenarios de prueba de UI utilizando PyAutoGUI
     - name: Ejecutar Pruebas de UI (PyAutoGUI)
       run: python -m pytest tests_ui/
